@@ -1,0 +1,324 @@
+<!DOCTYPE html>
+<html lang="pt-br">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Comparação de Taxas</title>
+    <style>
+        /* Estilos para tornar o layout responsivo */
+        body {
+            font-family: Arial, sans-serif;
+            max-width: 300px; /* Reduzi a largura máxima para 300px */
+            margin: 0 auto;
+            padding: 20px;
+        }
+        input, button, select {
+            padding: 10px;
+            margin-bottom: 10px;
+        }
+        .input-group {
+            display: flex;
+            justify-content: space-between;
+        }
+        .input-group > * {
+            flex: 1;
+        }
+        .input-group > *:first-child {
+            margin-right: 10px;
+        }
+        button {
+            background-color: #007bff;
+            color: #fff;
+            border: none;
+            cursor: pointer;
+            width: 100%;
+        }
+        .resultado {
+            font-weight: bold;
+        }
+        .mais-caros {
+            color: red;
+        }
+        .mais-baratos {
+            color: green;
+        }
+        /* Adicionando estilos para alinhar os inputs */
+        label {
+            display: block;
+        }
+        .input-group > div {
+            width: 70%;
+        }
+        .input-group > div:last-child {
+            width: 25%;
+        }
+    </style>
+</head>
+<body>
+    <h1 style="text-align: center;">Comparação de Taxas</h1>
+    <h2>Taxas Atuais</h2>
+    <label for="taxaDebitoAtual">Débito (%):</label>
+    <input type="text" id="taxaDebitoAtual" pattern="\\d*[,\\.]?\\d*" onkeyup="formatarMoeda(this)">
+    <label for="taxaCreditoAtual">Crédito (%):</label>
+    <input type="text" id="taxaCreditoAtual" pattern="\\d*[,\\.]?\\d*" onkeyup="formatarMoeda(this)">
+    <label for="taxaPixAtual">Pix (%):</label>
+    <input type="text" id="taxaPixAtual" pattern="\\d*[,\\.]?\\d*" onkeyup="formatarMoeda(this)">
+    <div class="input-group">
+        <div>
+            <label for="aluguelMaquininhaAtual">Aluguel (R$):</label>
+            <input type="text" id="aluguelMaquininhaAtual" pattern="\\d*[,\\.]?\\d*" onkeyup="formatarMoeda(this)">
+        </div>
+        <div>
+            <label for="quantAtual">Quant.:</label>
+            <input type="number" id="quantAtual" min="1" max="99" value="1">
+        </div>
+    </div>
+    
+    <h2>Taxas Stone</h2>
+    <label for="taxaDebitoStone">Débito (%):</label>
+    <input type="text" id="taxaDebitoStone" pattern="\\d*[,\\.]?\\d*" onkeyup="formatarMoeda(this)">
+    <label for="taxaCreditoStone">Crédito (%):</label>
+    <input type="text" id="taxaCreditoStone" pattern="\\d*[,\\.]?\\d*" onkeyup="formatarMoeda(this)">
+    <label for="taxaPixStone">Pix (%):</label>
+    <input type="text" id="taxaPixStone" pattern="\\d*[,\\.]?\\d*" onkeyup="formatarMoeda(this)">
+    <div class="input-group">
+        <div>
+            <label for="aluguelMaquininhaStone">Aluguel (R$):</label>
+            <input type="text" id="aluguelMaquininhaStone" pattern="\\d*[,\\.]?\\d*" onkeyup="formatarMoeda(this)">
+        </div>
+        <div>
+            <label for="quantStone">Quant.:</label>
+            <input type="number" id="quantStone" min="1" max="99" value="1">
+        </div>
+    </div>
+    
+    <h2>Inserir Valores em R$</h2>
+    <label for="valorDebito">Valor Débito (R$):</label>
+    <input type="text" id="valorDebito" pattern="\\d*[,\\.]?\\d*" onkeyup="formatarMoeda(this)">
+    <label for="valorCredito">Valor Crédito (R$):</label>
+    <input type="text" id="valorCredito" pattern="\\d*[,\\.]?\\d*" onkeyup="formatarMoeda(this)">
+    <label for="valorPix">Valor Pix (R$):</label>
+    <input type="text" id="valorPix" pattern="\\d*[,\\.]?\\d*" onkeyup="formatarMoeda(this)">
+    
+    <button onclick="calcularDiferencas()">Calcular</button>
+    <button onclick="salvarDados()">Salvar</button>
+    <input type="file" onchange="carregarDados(event)">
+    
+    <p class="resultado">Diferenças (Débito): <span id="diferencaDebito"></span> (<span id="ganhoPerdaDebito"></span>)</p>
+    <p class="resultado">Diferenças (Crédito): <span id="diferencaCredito"></span> (<span id="ganhoPerdaCredito"></span>)</p>
+    <p class="resultado">Diferenças (Pix): <span id="diferencaPix"></span> (<span id="ganhoPerdaPix"></span>)</p>
+    <p class="resultado">Diferenças de Aluguel: <span id="diferencaAluguel"></span> (<span id="ganhoPerdaAluguel"></span>)</p>
+    <p class="resultado">Total Mês: <span id="ganhoPerdaTotal"></span></p>
+    <p class="resultado">Total por Ano: <span id="totalPorAno"></span></p>
+    
+    <button onclick="compartilharWhatsApp()">Compartilhar no WhatsApp</button>
+
+    <script>
+        function formatarMoeda(input) {
+            let valor = input.value.replace(/\D/g, '');
+            valor = (valor/100).toFixed(2) + '';
+            valor = valor.replace(".", ",");
+            valor = valor.replace(/(\d)(\d{3})(\d{3}),/g, "$1.$2.$3,");
+            valor = valor.replace(/(\d)(\d{3}),/g, "$1.$2,");
+            input.value = valor;
+        }
+
+        function calcularDiferencas() {
+            const taxaDebitoAtual = parseFloat(document.getElementById('taxaDebitoAtual').value.replace(',', '.')) || 0;
+            const taxaCreditoAtual = parseFloat(document.getElementById('taxaCreditoAtual').value.replace(',', '.')) || 0;
+            const taxaPixAtual = parseFloat(document.getElementById('taxaPixAtual').value.replace(',', '.')) || 0;
+            const aluguelMaquininhaAtual = parseFloat(document.getElementById('aluguelMaquininhaAtual').value.replace('.', '').replace(',', '.')) || 0;
+            const quantAtual = parseInt(document.getElementById('quantAtual').value) || 1;
+            
+            const taxaDebitoStone = parseFloat(document.getElementById('taxaDebitoStone').value.replace(',', '.')) || 0;
+            const taxaCreditoStone = parseFloat(document.getElementById('taxaCreditoStone').value.replace(',', '.')) || 0;
+            const taxaPixStone = parseFloat(document.getElementById('taxaPixStone').value.replace(',', '.')) || 0;
+            const aluguelMaquininhaStone = parseFloat(document.getElementById('aluguelMaquininhaStone').value.replace('.', '').replace(',', '.')) || 0;
+            const quantStone = parseInt(document.getElementById('quantStone').value) || 1;
+
+            const diferencaDebito = taxaDebitoAtual - taxaDebitoStone;
+            const diferencaCredito = taxaCreditoAtual - taxaCreditoStone;
+            const diferencaPix = taxaPixAtual - taxaPixStone;
+            const diferencaAluguel = (aluguelMaquininhaAtual * quantAtual) - (aluguelMaquininhaStone * quantStone);
+
+            const valorDebito = parseFloat(document.getElementById('valorDebito').value.replace('.', '').replace(',', '.')) || 0;
+            const valorCredito = parseFloat(document.getElementById('valorCredito').value.replace('.', '').replace(',', '.')) || 0;
+            const valorPix = parseFloat(document.getElementById('valorPix').value.replace('.', '').replace(',', '.')) || 0;
+
+            const ganhoPerdaDebito = (diferencaDebito * valorDebito) / 100;
+            const ganhoPerdaCredito = (diferencaCredito * valorCredito) / 100;
+            const ganhoPerdaPix = (diferencaPix * valorPix) / 100;
+            const ganhoPerdaAluguel = diferencaAluguel;
+            const ganhoPerdaTotal = ganhoPerdaDebito + ganhoPerdaCredito + ganhoPerdaPix + ganhoPerdaAluguel;
+            const totalPorAno = ganhoPerdaTotal * 12;
+
+            document.getElementById('diferencaDebito').textContent = diferencaDebito.toFixed(2).replace('.', ',') + ' %';
+            document.getElementById('ganhoPerdaDebito').textContent = ganhoPerdaDebito.toFixed(2).replace('.', ',') + ' R$';
+            document.getElementById('diferencaCredito').textContent = diferencaCredito.toFixed(2).replace('.', ',') + ' %';
+            document.getElementById('ganhoPerdaCredito').textContent = ganhoPerdaCredito.toFixed(2).replace('.', ',') + ' R$';
+            document.getElementById('diferencaPix').textContent = diferencaPix.toFixed(2).replace('.', ',') + ' %';
+            document.getElementById('ganhoPerdaPix').textContent = ganhoPerdaPix.toFixed(2).replace('.', ',') + ' R$';
+            document.getElementById('diferencaAluguel').textContent = diferencaAluguel.toFixed(2).replace('.', ',') + ' R$';
+            document.getElementById('ganhoPerdaAluguel').textContent = ganhoPerdaAluguel.toFixed(2).replace('.', ',') + ' R$';
+            document.getElementById('ganhoPerdaTotal').textContent = ganhoPerdaTotal.toFixed(2).replace('.', ',') + ' R$';
+            document.getElementById('totalPorAno').textContent = totalPorAno.toFixed(2).replace('.', ',') + ' R$';
+
+            // Remover as classes antes de adicionar a nova
+            document.getElementById('ganhoPerdaDebito').classList.remove('mais-baratos', 'mais-caros');
+            document.getElementById('ganhoPerdaCredito').classList.remove('mais-baratos', 'mais-caros');
+            document.getElementById('ganhoPerdaPix').classList.remove('mais-baratos', 'mais-caros');
+            document.getElementById('ganhoPerdaAluguel').classList.remove('mais-baratos', 'mais-caros');
+            document.getElementById('ganhoPerdaTotal').classList.remove('mais-baratos', 'mais-caros');
+            document.getElementById('totalPorAno').classList.remove('mais-baratos', 'mais-caros');
+
+            if (ganhoPerdaDebito > 0) {
+                document.getElementById('ganhoPerdaDebito').classList.add('mais-baratos');
+            } else if (ganhoPerdaDebito < 0) {
+                document.getElementById('ganhoPerdaDebito').classList.add('mais-caros');
+            }
+
+            if (ganhoPerdaCredito > 0) {
+                document.getElementById('ganhoPerdaCredito').classList.add('mais-baratos');
+            } else if (ganhoPerdaCredito < 0) {
+                document.getElementById('ganhoPerdaCredito').classList.add('mais-caros');
+            }
+
+            if (ganhoPerdaPix > 0) {
+                document.getElementById('ganhoPerdaPix').classList.add('mais-baratos');
+            } else if (ganhoPerdaPix < 0) {
+                document.getElementById('ganhoPerdaPix').classList.add('mais-caros');
+            }
+
+            if (ganhoPerdaAluguel > 0) {
+                document.getElementById('ganhoPerdaAluguel').classList.add('mais-baratos');
+            } else if (ganhoPerdaAluguel < 0) {
+                document.getElementById('ganhoPerdaAluguel').classList.add('mais-caros');
+            }
+
+            if (ganhoPerdaTotal > 0) {
+                document.getElementById('ganhoPerdaTotal').classList.add('mais-baratos');
+            } else if (ganhoPerdaTotal < 0) {
+                document.getElementById('ganhoPerdaTotal').classList.add('mais-caros');
+            }
+
+            if (totalPorAno > 0) {
+                document.getElementById('totalPorAno').classList.add('mais-baratos');
+            } else if (totalPorAno < 0) {
+                document.getElementById('totalPorAno').classList.add('mais-caros');
+            }
+        }
+
+        function salvarDados() {
+            let dados = {
+                taxaDebitoAtual: document.getElementById('taxaDebitoAtual').value,
+                taxaCreditoAtual: document.getElementById('taxaCreditoAtual').value,
+                taxaPixAtual: document.getElementById('taxaPixAtual').value,
+                aluguelMaquininhaAtual: document.getElementById('aluguelMaquininhaAtual').value,
+                quantAtual: document.getElementById('quantAtual').value,
+                taxaDebitoStone: document.getElementById('taxaDebitoStone').value,
+                taxaCreditoStone: document.getElementById('taxaCreditoStone').value,
+                taxaPixStone: document.getElementById('taxaPixStone').value,
+                aluguelMaquininhaStone: document.getElementById('aluguelMaquininhaStone').value,
+                quantStone: document.getElementById('quantStone').value,
+                valorDebito: document.getElementById('valorDebito').value,
+                valorCredito: document.getElementById('valorCredito').value,
+                valorPix: document.getElementById('valorPix').value
+            };
+
+            let blob = new Blob([JSON.stringify(dados)], {type: "application/json"});
+            let url = URL.createObjectURL(blob);
+
+            let a = document.createElement('a');
+            a.download = "dados.json";
+            a.href = url;
+            a.click();
+        }
+
+        function carregarDados(event) {
+            let input = event.target;
+
+            let reader = new FileReader();
+            reader.onload = function(){
+                let dados = JSON.parse(reader.result);
+
+                document.getElementById('taxaDebitoAtual').value = dados.taxaDebitoAtual;
+                document.getElementById('taxaCreditoAtual').value = dados.taxaCreditoAtual;
+                document.getElementById('taxaPixAtual').value = dados.taxaPixAtual;
+                document.getElementById('aluguelMaquininhaAtual').value = dados.aluguelMaquininhaAtual;
+                document.getElementById('quantAtual').value = dados.quantAtual;
+                document.getElementById('taxaDebitoStone').value = dados.taxaDebitoStone;
+                document.getElementById('taxaCreditoStone').value = dados.taxaCreditoStone;
+                document.getElementById('taxaPixStone').value = dados.taxaPixStone;
+                document.getElementById('aluguelMaquininhaStone').value = dados.aluguelMaquininhaStone;
+                document.getElementById('quantStone').value = dados.quantStone;
+                document.getElementById('valorDebito').value = dados.valorDebito;
+                document.getElementById('valorCredito').value = dados.valorCredito;
+                document.getElementById('valorPix').value = dados.valorPix;
+            };
+            reader.readAsText(input.files[0]);
+        }
+
+        function compartilharWhatsApp() {
+            let taxaDebitoAtual = document.getElementById('taxaDebitoAtual').value;
+            let taxaCreditoAtual = document.getElementById('taxaCreditoAtual').value;
+            let taxaPixAtual = document.getElementById('taxaPixAtual').value;
+            let aluguelMaquininhaAtual = document.getElementById('aluguelMaquininhaAtual').value;
+            let quantAtual = document.getElementById('quantAtual').value;
+            let taxaDebitoStone = document.getElementById('taxaDebitoStone').value;
+            let taxaCreditoStone = document.getElementById('taxaCreditoStone').value;
+            let taxaPixStone = document.getElementById('taxaPixStone').value;
+            let aluguelMaquininhaStone = document.getElementById('aluguelMaquininhaStone').value;
+            let quantStone = document.getElementById('quantStone').value;
+            let valorDebito = document.getElementById('valorDebito').value;
+            let valorCredito = document.getElementById('valorCredito').value;
+            let valorPix = document.getElementById('valorPix').value;
+
+                                  let diferencaDebito = document.getElementById('diferencaDebito').textContent;
+            let ganhoPerdaDebito = document.getElementById('ganhoPerdaDebito').textContent;
+            let diferencaCredito = document.getElementById('diferencaCredito').textContent;
+            let ganhoPerdaCredito = document.getElementById('ganhoPerdaCredito').textContent;
+            let diferencaPix = document.getElementById('diferencaPix').textContent;
+            let ganhoPerdaPix = document.getElementById('ganhoPerdaPix').textContent;
+            let diferencaAluguel = document.getElementById('diferencaAluguel').textContent;
+            let ganhoPerdaAluguel = document.getElementById('ganhoPerdaAluguel').textContent;
+            let ganhoPerdaTotal = document.getElementById('ganhoPerdaTotal').textContent;
+            let totalPorAno = document.getElementById('totalPorAno').textContent;
+
+           let mensagem = "*Taxas Atuais*" +
+                           "\nTaxa de Débito: *" + taxaDebitoAtual + "%*" +
+                           "\nTaxa de Crédito: *" + taxaCreditoAtual + "%*" +
+                           "\nTaxa de Pix: *" + taxaPixAtual + "%*" +
+                           "\nAluguel: *" + aluguelMaquininhaAtual + "R$*" +
+                           "\nQuantidade(s): *" + quantAtual + "un(s)*" +
+                           "\n" +
+                           "\n*Taxas Stone*" +
+                           "\nTaxa de Débito: *" + taxaDebitoStone + "%*" +
+                           "\nTaxa de Crédito: *" + taxaCreditoStone + "%*" +
+                           "\nTaxa de Pix: *" + taxaPixStone + "%*" +
+                           "\nAluguel: *" + aluguelMaquininhaStone + "R$*" +
+                           "\nQuantidade(s): *" + quantStone + "un(s)*" +
+                           "\n" +
+                           "\n*Valores de Transação*" +
+                           "\nValor Débito: *" + valorDebito + "R$*" +
+                           "\nValor Crédito: *" + valorCredito + "R$*" +
+                           "\nValor Pix: *" + valorPix + "R$*" +
+                           "\n" +
+                           "\n*Diferenças*" +
+                           "\nTaxa (Débito): *" + diferencaDebito + "*" +
+                           "\nValor Débito: *" + ganhoPerdaDebito + "*" +
+                           "\nTaxa (Crédito): *" + diferencaCredito + "*" +
+                           "\nValor Crédito: *" + ganhoPerdaCredito + "*" +
+                           "\nTaxa (Pix): *" + diferencaPix + "*" +
+                           "\nValor Pix: *" + ganhoPerdaPix + "*" +
+                           "\nValor de Aluguel: *" + diferencaAluguel + "*" +
+                           "\n" +
+                           "\n*Resultado Final*" +
+                           "\nTotal Mêsl: *" + ganhoPerdaTotal + "*" +
+                           "\nTotal por Ano: *" + totalPorAno + "*";
+
+            let url = 'https://api.whatsapp.com/send?text=' + encodeURIComponent(mensagem);
+            window.open(url);
+        }
+    </script>
+</body>
+</html>
