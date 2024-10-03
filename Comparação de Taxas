@@ -1,4 +1,4 @@
-<html><head><base href="blob:https://party.websim.ai/6cb79a74-a5ab-4ed9-9659-7693da50e2dc">
+<html><head><base href="https://websimcreationengine.com/maquina-x-stone/">
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Compare Stone</title>
@@ -520,4 +520,347 @@
             const custoAtualCredito712 = vendaCredito712 * (atualCredito712 / 100);
             const custoAtualPix = vendaPix * (atualPix / 100);
             const custoAtualAluguel = parseInputValue('atual-aluguel') * parseInputValue('atual-quantidade');
-            const vendaTotal = vendaDeb
+            const vendaTotal = vendaDebito + vendaCreditoVista + vendaCredito26 + vendaCredito712 + vendaPix + vendaOutrosPercentual;
+            const custoAtualOutrosPercentual = vendaTotal * (atualOutrosPercentual / 100);
+            const custoAtualOutrosReal = parseInputValue('atual-outros-real');
+
+            const custoTotalAtual = custoAtualDebito + custoAtualCreditoVista + custoAtualCredito26 + custoAtualCredito712 + custoAtualPix + custoAtualAluguel + custoAtualOutrosPercentual + custoAtualOutrosReal;
+
+            const ipvCheckbox = document.getElementById('ipv-checkbox');
+            const custoStoneAluguel = ipvCheckbox.checked ? 0 : parseInputValue('stone-aluguel') * parseInputValue('stone-quantidade');
+
+            const custoStoneDebito = vendaDebito * (stoneDebito / 100);
+            const custoStoneCreditoVista = vendaCreditoVista * (stoneCreditoVista / 100);
+            const custoStoneCredito26 = vendaCredito26 * (stoneCredito26 / 100);
+            const custoStoneCredito712 = vendaCredito712 * (stoneCredito712 / 100);
+            const custoStonePix = vendaPix * (stonePix / 100);
+            const custoStoneOutrosPercentual = vendaTotal * (stoneOutrosPercentual / 100);
+            const custoStoneOutrosReal = parseInputValue('stone-outros-real');
+            const raioXValor = document.getElementById('raio-x-checkbox').checked ? parseInputValue('raio-x-valor') : 0;
+
+            const custoTotalStone = custoStoneDebito + custoStoneCreditoVista + custoStoneCredito26 + custoStoneCredito712 + custoStonePix + custoStoneAluguel + custoStoneOutrosPercentual + custoStoneOutrosReal - raioXValor;
+
+            const diferenca = custoTotalAtual - custoTotalStone;
+
+            let resultado = "<h3>Resultado da comparação:</h3>";
+            resultado += "<p>Custo total com a máquina atual: " + formatToBrazilianCurrency(custoTotalAtual) + "</p>";
+            resultado += "<p>Custo total com a oferta Stone: " + formatToBrazilianCurrency(custoTotalStone) + "</p>";
+
+            let resultadoDetalhado = "<h3>Detalhamento por modalidade:</h3>";
+            const fieldsWithValues = {
+                debito: vendaDebito > 0,
+                creditoVista: vendaCreditoVista > 0,
+                credito26: vendaCredito26 > 0,
+                credito712: vendaCredito712 > 0,
+                pix: vendaPix > 0,
+                aluguel: parseInputValue('atual-aluguel') > 0 || parseInputValue('stone-aluguel') > 0,
+                outrosReal: parseInputValue('atual-outros-real') > 0 || parseInputValue('stone-outros-real') > 0,
+                outrosPercentual: parseInputValue('atual-outros-percentual') > 0 || parseInputValue('stone-outros-percentual') > 0
+            };
+
+            if (fieldsWithValues.debito) {
+                const rateDiff = calculatePercentageDifference(atualDebito, stoneDebito);
+                resultadoDetalhado += `<p>Débito: ${formatDifference(custoAtualDebito - custoStoneDebito)} (${rateDiff.toFixed(2)}%)</p>`;
+            }
+            if (fieldsWithValues.creditoVista) {
+                const rateDiff = calculatePercentageDifference(atualCreditoVista, stoneCreditoVista);
+                resultadoDetalhado += `<p>Crédito à Vista: ${formatDifference(custoAtualCreditoVista - custoStoneCreditoVista)} (${rateDiff.toFixed(2)}%)</p>`;
+            }
+            if (fieldsWithValues.credito26) {
+                const rateDiff = calculatePercentageDifference(atualCredito26, stoneCredito26);
+                resultadoDetalhado += `<p>Crédito 2x a 6x: ${formatDifference(custoAtualCredito26 - custoStoneCredito26)} (${rateDiff.toFixed(2)}%)</p>`;
+            }
+            if (fieldsWithValues.credito712) {
+                const rateDiff = calculatePercentageDifference(atualCredito712, stoneCredito712);
+                resultadoDetalhado += `<p>Crédito 7x a 12x: ${formatDifference(custoAtualCredito712 - custoStoneCredito712)} (${rateDiff.toFixed(2)}%)</p>`;
+            }
+            if (fieldsWithValues.pix) {
+                const rateDiff = calculatePercentageDifference(atualPix, stonePix);
+                resultadoDetalhado += `<p>Pix: ${formatDifference(custoAtualPix - custoStonePix)} (${rateDiff.toFixed(2)}%)</p>`;
+            }
+            if (fieldsWithValues.aluguel) {
+                resultadoDetalhado += `<p>Aluguel: ${formatDifference(custoAtualAluguel - custoStoneAluguel)}</p>`;
+            }
+            if (fieldsWithValues.outrosReal) {
+                const atualOutrosRealLabel = getCustomLabel('atual', 'real');
+                const stoneOutrosRealLabel = getCustomLabel('stone', 'real');
+                const labelText = atualOutrosRealLabel === stoneOutrosRealLabel ? atualOutrosRealLabel : `${atualOutrosRealLabel} / ${stoneOutrosRealLabel}`;
+                resultadoDetalhado += `<p>${labelText}: ${formatDifference(custoAtualOutrosReal - custoStoneOutrosReal)}</p>`;
+            }
+            if (fieldsWithValues.outrosPercentual) {
+                const atualOutrosPercentualLabel = getCustomLabel('atual', 'percentual');
+                const stoneOutrosPercentualLabel = getCustomLabel('stone', 'percentual');
+                const labelText = atualOutrosPercentualLabel === stoneOutrosPercentualLabel ? atualOutrosPercentualLabel : `${atualOutrosPercentualLabel} / ${stoneOutrosPercentualLabel}`;
+                const rateDiff = calculatePercentageDifference(atualOutrosPercentual, stoneOutrosPercentual);
+                resultadoDetalhado += `<p>${labelText}: ${formatDifference(custoAtualOutrosPercentual - custoStoneOutrosPercentual)} (${rateDiff.toFixed(2)}%)</p>`;
+            }
+
+            if (raioXValor > 0) {
+                resultadoDetalhado += "<p>Economia do Raio-X: " + formatDifference(raioXValor) + "</p>";
+            }
+
+            resultadoDetalhado += "<h4>Conclusão:</h4>";
+            if (diferenca > 0) {
+                const economiaAnual = diferenca * 12;
+                resultadoDetalhado += "<p class='positivo'>A oferta Stone é vantajosa. Você economizaria " + formatToBrazilianCurrency(diferenca) + " por mês, o que representa uma economia de " + formatToBrazilianCurrency(economiaAnual) + " por ano.</p>";
+            } else if (diferenca < 0) {
+                resultadoDetalhado += "<p class='negativo'>A oferta Stone requer um investimento. Seria necessário um investimento de " + formatToBrazilianCurrency(Math.abs(diferenca)) + " por mês para ser Stone.</p>";
+            } else {
+                resultadoDetalhado += "<p>As ofertas são equivalentes em termos de custo.</p>";
+            }
+
+            document.getElementById('resultado').innerHTML = resultadoDetalhado;
+        }
+
+        function displayErrorMessage(message) {
+            const errorContainer = document.getElementById('error-messages');
+            errorContainer.innerHTML = `<p style="color: red;">${message}</p>`;
+            document.getElementById('resultado').innerHTML = '';
+        }
+
+        function toggleRaioX() {
+            const checkbox = document.getElementById('raio-x-checkbox');
+            const container = document.getElementById('raio-x-container');
+            container.style.display = checkbox.checked ? 'block' : 'none';
+        }
+
+        function getCustomLabel(section, type) {
+            const label = document.querySelector(`label[data-for="${section}-outros-${type}"]`);
+            return label ? label.textContent.replace(':', '') : (type === 'percentual' ? 'Outros %' : 'Outros R$');
+        }
+
+        function updateFieldsVisibility() {
+            const fields = [
+                'debito', 'credito-vista', 'credito-2-6', 'credito-7-12', 'pix',
+                'aluguel', 'quantidade', 'outros-real', 'outros-percentual'
+            ];
+
+            fields.forEach(field => {
+                const atualValue = parseInputValue(`atual-${field}`);
+                const stoneContainer = document.getElementById(`stone-${field}-container`);
+                const vendaContainer = document.getElementById(`venda-${field}-container`);
+                
+                if (atualValue > 0) {
+                    if (stoneContainer) stoneContainer.style.display = 'block';
+                    if (vendaContainer) vendaContainer.style.display = 'block';
+                } else {
+                    if (stoneContainer) stoneContainer.style.display = 'none';
+                    if (vendaContainer && field !== 'outros-real') vendaContainer.style.display = 'none';
+                }
+            });
+        }
+
+        function addInputListeners() {
+            const fields = [
+                'debito', 'credito-vista', 'credito-2-6', 'credito-7-12', 'pix',
+                'aluguel', 'quantidade', 'outros-real', 'outros-percentual'
+            ];
+
+            fields.forEach(field => {
+                const atualInput = document.getElementById(`atual-${field}`);
+                atualInput.addEventListener('input', updateFieldsVisibility);
+            });
+        }
+
+        function setupInputFormatting() {
+            const inputs = document.querySelectorAll('input[type="text"]');
+            inputs.forEach(input => {
+                input.setAttribute('inputmode', 'numeric');
+                input.setAttribute('pattern', '[0-9]*');
+                input.addEventListener('input', function(e) {
+                    formatCurrency(e.target);
+                });
+            });
+        }
+
+        function editLabel(labelElement) {
+            const currentText = labelElement.textContent.replace(':', '').trim();
+            const inputField = document.createElement('input');
+            inputField.type = 'text';
+            inputField.value = currentText;
+            inputField.style.width = '150px';
+
+            const saveButton = document.createElement('button');
+            saveButton.textContent = 'Save';
+            saveButton.classList.add('save-label-button');
+            saveButton.onclick = function() {
+                saveLabel(labelElement, inputField);
+            };
+
+            labelElement.style.display = 'none';
+            labelElement.parentNode.insertBefore(inputField, labelElement.nextSibling);
+            labelElement.parentNode.insertBefore(saveButton, inputField.nextSibling);
+
+            inputField.focus();
+        }
+
+        function saveLabel(labelElement, inputField) {
+            const newText = inputField.value.trim();
+            if (newText) {
+                labelElement.textContent = newText + ':';
+                
+                const [section, type] = labelElement.getAttribute('data-for').split('-').slice(0, 2);
+                updateOtherLabels(section, type, newText);
+            }
+            labelElement.style.display = '';
+            inputField.remove();
+            const saveButton = labelElement.parentNode.querySelector('.save-label-button');
+            if (saveButton) {
+                saveButton.remove();
+            }
+        }
+
+        function updateOtherLabels(section, type, newText) {
+            const otherSection = section === 'atual' ? 'stone' : 'atual';
+            const otherLabel = document.querySelector(`label[data-for="${otherSection}-outros-${type}"]`);
+            if (otherLabel) {
+                otherLabel.textContent = newText + ':';
+            }
+            const vendaLabel = document.querySelector(`label[data-for="venda-outros-${type}"]`);
+            if (vendaLabel) {
+                vendaLabel.textContent = newText + ':';
+            }
+        }
+
+        function loadData() {
+            document.getElementById('fileInput').click();
+        }
+
+        document.getElementById('fileInput').addEventListener('change', function(event) {
+            const file = event.target.files[0];
+            if (file) {
+                const reader = new FileReader();
+                reader.onload = function(e) {
+                    try {
+                        const data = JSON.parse(e.target.result);
+                        updatePageWithLoadedData(data);
+                    } catch (error) {
+                        alert('Error parsing file: ' + error.message);
+                    }
+                };
+                reader.readAsText(file);
+            }
+        });
+
+        function updatePageWithLoadedData(data) {
+            for (const [key, value] of Object.entries(data.maquinaAtual)) {
+                const id = `atual-${key.replace(/([A-Z])/g, '-$1').toLowerCase()}`;
+                document.getElementById(id).value = value;
+            }
+
+            for (const [key, value] of Object.entries(data.ofertaStone)) {
+                if (key === 'raioX') {
+                    document.getElementById('raio-x-checkbox').checked = value;
+                    toggleRaioX();
+                } else if (key === 'ipv') {
+                    document.getElementById('ipv-checkbox').checked = value;
+                } else {
+                    const id = `stone-${key.replace(/([A-Z])/g, '-$1').toLowerCase()}`;
+                    document.getElementById(id).value = value;
+                }
+            }
+
+            for (const [key, value] of Object.entries(data.valorMensal)) {
+                const id = `venda-${key.replace(/([A-Z])/g, '-$1').toLowerCase()}`;
+                document.getElementById(id).value = value;
+            }
+
+            updateFieldsVisibility();
+            alert('Dados carregados com sucesso!');
+        }
+
+        function saveData() {
+            const data = {
+                maquinaAtual: {
+                    debito: document.getElementById('atual-debito').value,
+                    creditoVista: document.getElementById('atual-credito-vista').value,
+                    credito26: document.getElementById('atual-credito-2-6').value,
+                    credito712: document.getElementById('atual-credito-7-12').value,
+                    pix: document.getElementById('atual-pix').value,
+                    aluguel: document.getElementById('atual-aluguel').value,
+                    quantidade: document.getElementById('atual-quantidade').value,
+                    outrosReal: document.getElementById('atual-outros-real').value,
+                    outrosPercentual: document.getElementById('atual-outros-percentual').value
+                },
+                ofertaStone: {
+                    debito: document.getElementById('stone-debito').value,
+                    creditoVista: document.getElementById('stone-credito-vista').value,
+                    credito26: document.getElementById('stone-credito-2-6').value,
+                    credito712: document.getElementById('stone-credito-7-12').value,
+                    pix: document.getElementById('stone-pix').value,
+                    aluguel: document.getElementById('stone-aluguel').value,
+                    quantidade: document.getElementById('stone-quantidade').value,
+                    outrosReal: document.getElementById('stone-outros-real').value,
+                    outrosPercentual: document.getElementById('stone-outros-percentual').value,
+                    raioX: document.getElementById('raio-x-checkbox').checked,
+                    raioXValor: document.getElementById('raio-x-valor').value,
+                    ipv: document.getElementById('ipv-checkbox').checked
+                },
+                valorMensal: {
+                    debito: document.getElementById('venda-debito').value,
+                    creditoVista: document.getElementById('venda-credito-vista').value,
+                    credito26: document.getElementById('venda-credito-2-6').value,
+                    credito712: document.getElementById('venda-credito-7-12').value,
+                    pix: document.getElementById('venda-pix').value,
+                    outrosPercentual: document.getElementById('venda-outros-percentual').value
+                }
+            };
+
+            const jsonData = JSON.stringify(data, null, 2);
+            const blob = new Blob([jsonData], { type: 'application/json' });
+            const url = URL.createObjectURL(blob);
+            const filename = prompt('Digite um nome para o arquivo:', 'dados_compare_stone.json');
+
+            if (filename) {
+                const a = document.createElement('a');
+                a.href = url;
+                a.download = filename;
+                document.body.appendChild(a);
+                a.click();
+                document.body.removeChild(a);
+                URL.revokeObjectURL(url);
+            }
+        }
+
+        document.addEventListener('DOMContentLoaded', setupInputFormatting);
+        updateFieldsVisibility();
+        addInputListeners();
+        
+        function openNav() {
+            document.getElementById("side-menu").style.width = "250px";
+            document.getElementById("overlay").style.display = "block";
+        }
+
+        function closeNav() {
+            document.getElementById("side-menu").style.width = "0";
+            document.getElementById("overlay").style.display = "none";
+        }
+
+        function hideManual() {
+            document.getElementById('manual-overlay').style.display = 'none';
+            document.getElementById('main-content').style.display = 'block';
+        }
+
+        function showManual() {
+            document.getElementById('manual-overlay').style.display = 'block';
+            document.getElementById('main-content').style.display = 'none';
+            closeNav();
+        }
+
+        function showHome() {
+            document.getElementById('manual-overlay').style.display = 'none';
+            document.getElementById('main-content').style.display = 'block';
+        }
+
+        function goToHome() {
+            closeNav();
+            showHome();
+        }
+
+        document.querySelector('.menu-category a[onclick="goToHome()"]').addEventListener('click', goToHome);
+        document.getElementById('overlay').addEventListener('click', closeNav);
+        document.getElementById('menu-button').addEventListener('click', openNav);
+
+        updateFontSize();
+    </script>
+</body></html>
