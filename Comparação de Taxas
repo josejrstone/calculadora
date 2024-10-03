@@ -1,324 +1,523 @@
-<!DOCTYPE html>
-<html lang="pt-br">
-<head>
+<html><head><base href="blob:https://party.websim.ai/6cb79a74-a5ab-4ed9-9659-7693da50e2dc">
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Comparação de Taxas</title>
+    <title>Compare Stone</title>
     <style>
-        /* Estilos para tornar o layout responsivo */
+        :root {
+            --stone-green: #00A868;
+            --stone-dark-green: #008C5A;
+            --stone-light-green: #E6F7F0;
+            --stone-gray: #4A4A4A;
+            --stone-light-gray: #F5F5F5;
+            --stone-orange: #FF5733;
+        }
+
         body {
-            font-family: Arial, sans-serif;
-            max-width: 300px; /* Reduzi a largura máxima para 300px */
+            font-family: 'Roboto', Arial, sans-serif;
+            margin: 0;
+            padding: 0;
+            background-color: var(--stone-light-gray);
+            color: var(--stone-gray);
+        }
+
+        .container {
+            max-width: 1200px;
             margin: 0 auto;
             padding: 20px;
         }
-        input, button, select {
-            padding: 10px;
-            margin-bottom: 10px;
-        }
-        .input-group {
+
+        header {
+            background-color: var(--stone-green);
+            padding: 20px 0;
+            margin-bottom: 30px;
             display: flex;
             justify-content: space-between;
+            align-items: center;
         }
-        .input-group > * {
-            flex: 1;
+
+        header h1 {
+            color: white;
+            margin: 0;
+            font-size: 2.5em;
+            padding-left: 20px;
         }
-        .input-group > *:first-child {
-            margin-right: 10px;
-        }
-        button {
-            background-color: #007bff;
-            color: #fff;
+
+        #menu-button {
+            background-color: white;
+            color: var(--stone-green);
             border: none;
+            font-size: 24px;
             cursor: pointer;
-            width: 100%;
+            padding: 5px 10px;
+            margin-left: 20px;
+            border-radius: 4px;
+            transition: background-color 0.3s, color 0.3s;
         }
-        .resultado {
-            font-weight: bold;
+
+        #menu-button:hover {
+            background-color: var(--stone-light-green);
+            color: var(--stone-dark-green);
         }
-        .mais-caros {
-            color: red;
+
+        body.font-size-1 { font-size: 14px; }
+        body.font-size-2 { font-size: 15px; }
+        body.font-size-3 { font-size: 16px; }
+        body.font-size-4 { font-size: 17px; }
+        body.font-size-5 { font-size: 18px; }
+
+        .section {
+            background-color: white;
+            border-radius: 8px;
+            box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1);
+            margin-bottom: 30px;
+            padding: 30px;
         }
-        .mais-baratos {
-            color: green;
+
+        .section h2 {
+            color: var(--stone-green);
+            border-bottom: 2px solid var(--stone-light-green);
+            padding-bottom: 10px;
+            margin-top: 0;
         }
-        /* Adicionando estilos para alinhar os inputs */
+
         label {
             display: block;
+            margin-top: 15px;
+            font-weight: 500;
         }
-        .input-group > div {
-            width: 70%;
+
+        input[type="text"] {
+            width: 100%;
+            padding: 10px;
+            border: 1px solid #ccc;
+            border-radius: 4px;
+            font-size: 16px;
         }
-        .input-group > div:last-child {
-            width: 25%;
+
+        button {
+            background-color: var(--stone-green);
+            color: white;
+            border: none;
+            padding: 12px 20px;
+            font-size: 18px;
+            border-radius: 4px;
+            cursor: pointer;
+            transition: background-color 0.3s;
+            display: block;  
+            margin: 20px auto;  
+            width: fit-content;  
+        }
+
+        button:hover {
+            background-color: var(--stone-dark-green);
+        }
+
+        #resultado {
+            background-color: var(--stone-light-green);
+            border-radius: 8px;
+            padding: 20px;
+            margin-top: 30px;
+        }
+
+        .positivo {
+            color: var(--stone-green);
+            font-weight: bold;
+        }
+
+        .negativo {
+            color: var(--stone-orange);
+            font-weight: bold;
+        }
+
+        .neutro {
+            color: var(--stone-gray);
+        }
+
+        .small-text {
+            font-size: 0.9em;
+            color: #777;
+            margin-top: 5px;
+        }
+
+        .side-menu {
+            height: 100%;
+            width: 0;
+            position: fixed;
+            z-index: 1000;
+            top: 0;
+            right: 0;
+            background-color: var(--stone-green);
+            overflow-x: hidden;
+            transition: 0.5s;
+            padding-top: 60px;
+            box-shadow: 0 0 10px rgba(0,0,0,0.3);
+        }
+
+        .menu-category {
+            margin-bottom: 20px;
+        }
+
+        .menu-category h3 {
+            color: var(--stone-light-green);
+            font-size: 18px;
+            margin-bottom: 10px;
+            padding-left: 32px;
+            border-bottom: 1px solid var(--stone-light-green);
+        }
+
+        .side-menu a {
+            padding: 8px 8px 8px 32px;
+            text-decoration: none;
+            font-size: 16px;
+            color: white;
+            display: block;
+            transition: 0.3s;
+        }
+
+        .side-menu a:hover {
+            color: var(--stone-light-green);
+        }
+
+        .side-menu .close-btn {
+            position: absolute;
+            top: 0;
+            right: 25px; 
+            font-size: 24px; 
+            margin-left: 0; 
+            margin-right: 50px; 
+        }
+
+        @media screen and (max-height: 450px) {
+            .side-menu {padding-top: 15px;}
+            .side-menu a {font-size: 14px;} 
+        }
+
+        body::before {
+            content: "";
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            opacity: 0.1;
+            z-index: -1;
+            background-image: url("data:image/svg+xml,%3Csvg width='60' height='60' viewBox='0 0 60 60' xmlns='http://www.w3.org/2000/svg'%3E%3Cg fill='none' fill-rule='evenodd'%3E%3Cg fill='%2300a868' fill-opacity='0.1'%3E%3Cpath d='M36 34v-4h-2v4h-4v2h4v4h2v-4h4v-2h-4zm0-30V0h-2v4h-4v2h4v4h2V6h4V4h-4zM6 34v-4H4v4H0v2h4v4h2v-4h4v-2H6zM6 4V0H4v4H0v2h4v4h2V6h4V4H6z'/%3E%3C/g%3E%3C/g%3E%3C/svg%3E");
+        }
+
+        .overlay {
+            display: none;
+            position: fixed;
+            width: 100%;
+            height: 100%;
+            top: 0;
+            left: 0;
+            right: 0;
+            bottom: 0;
+            background-color: rgba(0,0,0,0.5);
+            z-index: 999;
+            cursor: pointer;
+        }
+
+        .overlay-content {
+            display: none;
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            background-color: rgba(0,0,0,0.7);
+            z-index: 2000;
+            overflow-y: auto;
+        }
+
+        #manual-content {
+            background-color: white;
+            margin: 50px auto;
+            padding: 20px;
+            width: 80%;
+            max-width: 800px;
+            border-radius: 8px;
+            box-shadow: 0 0 10px rgba(0,0,0,0.3);
+        }
+
+        #manual-content h2 {
+            color: var(--stone-green);
+            border-bottom: 2px solid var(--stone-light-green);
+            padding-bottom: 10px;
         }
     </style>
 </head>
 <body>
-    <h1 style="text-align: center;">Comparação de Taxas</h1>
-    <h2>Taxas Atuais</h2>
-    <label for="taxaDebitoAtual">Débito (%):</label>
-    <input type="text" id="taxaDebitoAtual" pattern="\\d*[,\\.]?\\d*" onkeyup="formatarMoeda(this)">
-    <label for="taxaCreditoAtual">Crédito (%):</label>
-    <input type="text" id="taxaCreditoAtual" pattern="\\d*[,\\.]?\\d*" onkeyup="formatarMoeda(this)">
-    <label for="taxaPixAtual">Pix (%):</label>
-    <input type="text" id="taxaPixAtual" pattern="\\d*[,\\.]?\\d*" onkeyup="formatarMoeda(this)">
-    <div class="input-group">
-        <div>
-            <label for="aluguelMaquininhaAtual">Aluguel (R$):</label>
-            <input type="text" id="aluguelMaquininhaAtual" pattern="\\d*[,\\.]?\\d*" onkeyup="formatarMoeda(this)">
-        </div>
-        <div>
-            <label for="quantAtual">Quant.:</label>
-            <input type="number" id="quantAtual" min="1" max="99" value="1">
+    <input type="file" id="fileInput" style="display: none;" accept=".json">
+    <div class="overlay" id="overlay"></div>
+    <div class="overlay-content" id="manual-overlay">
+        <div id="manual-content">
+            <h2>Manual de Uso</h2>
+            <p>Exemplo de manual de Ajuda</p>
+            <button onclick="hideManual()">Fechar Manual</button>
         </div>
     </div>
-    
-    <h2>Taxas Stone</h2>
-    <label for="taxaDebitoStone">Débito (%):</label>
-    <input type="text" id="taxaDebitoStone" pattern="\\d*[,\\.]?\\d*" onkeyup="formatarMoeda(this)">
-    <label for="taxaCreditoStone">Crédito (%):</label>
-    <input type="text" id="taxaCreditoStone" pattern="\\d*[,\\.]?\\d*" onkeyup="formatarMoeda(this)">
-    <label for="taxaPixStone">Pix (%):</label>
-    <input type="text" id="taxaPixStone" pattern="\\d*[,\\.]?\\d*" onkeyup="formatarMoeda(this)">
-    <div class="input-group">
-        <div>
-            <label for="aluguelMaquininhaStone">Aluguel (R$):</label>
-            <input type="text" id="aluguelMaquininhaStone" pattern="\\d*[,\\.]?\\d*" onkeyup="formatarMoeda(this)">
+    <header>
+        <h1>Compare Stone</h1>
+        <button id="menu-button">☰</button>
+    </header>
+    <div id="side-menu" class="side-menu">
+        <a href="javascript:void(0)" class="close-btn" onclick="closeNav()">&times;</a>
+        
+        <div class="menu-category">
+            <h3>Início</h3>
+            <a href="javascript:void(0)" onclick="goToHome()">Página Inicial</a>
         </div>
-        <div>
-            <label for="quantStone">Quant.:</label>
-            <input type="number" id="quantStone" min="1" max="99" value="1">
+        
+        <div class="menu-category">
+            <h3>Ajuda</h3>
+            <a href="javascript:void(0)" onclick="showManual()">Manual de Uso</a>
+        </div>
+        
+        <div class="menu-category">
+            <h3>Exportar e Importar</h3>
+            <a href="javascript:void(0)" onclick="saveData()">Salvar Dados</a>
+            <a href="javascript:void(0)" onclick="loadData()">Carregar Dados</a>
+        </div>
+        
+        <div class="menu-category">
+            <h3>Compartilhar</h3>
+            <a href="#">Compartilhar com Cliente</a>
+        </div>
+        
+        <div class="menu-category">
+            <h3>Acessibilidade</h3>
+            <a href="#" id="increase-font">Aumentar Fonte (A+)</a>
+            <a href="#" id="decrease-font">Diminuir Fonte (A-)</a>
+            <a href="#" id="reset-font">Fonte Padrão</a>
+        </div>
+        
+        <div class="menu-category">
+            <h3>Contato</h3>
+            <a href="#">Contato pelo Whatsapp</a>
         </div>
     </div>
-    
-    <h2>Inserir Valores em R$</h2>
-    <label for="valorDebito">Valor Débito (R$):</label>
-    <input type="text" id="valorDebito" pattern="\\d*[,\\.]?\\d*" onkeyup="formatarMoeda(this)">
-    <label for="valorCredito">Valor Crédito (R$):</label>
-    <input type="text" id="valorCredito" pattern="\\d*[,\\.]?\\d*" onkeyup="formatarMoeda(this)">
-    <label for="valorPix">Valor Pix (R$):</label>
-    <input type="text" id="valorPix" pattern="\\d*[,\\.]?\\d*" onkeyup="formatarMoeda(this)">
-    
-    <button onclick="calcularDiferencas()">Calcular</button>
-    <button onclick="salvarDados()">Salvar</button>
-    <input type="file" onchange="carregarDados(event)">
-    
-    <p class="resultado">Diferenças (Débito): <span id="diferencaDebito"></span> (<span id="ganhoPerdaDebito"></span>)</p>
-    <p class="resultado">Diferenças (Crédito): <span id="diferencaCredito"></span> (<span id="ganhoPerdaCredito"></span>)</p>
-    <p class="resultado">Diferenças (Pix): <span id="diferencaPix"></span> (<span id="ganhoPerdaPix"></span>)</p>
-    <p class="resultado">Diferenças de Aluguel: <span id="diferencaAluguel"></span> (<span id="ganhoPerdaAluguel"></span>)</p>
-    <p class="resultado">Total Mês: <span id="ganhoPerdaTotal"></span></p>
-    <p class="resultado">Total por Ano: <span id="totalPorAno"></span></p>
-    
-    <button onclick="compartilharWhatsApp()">Compartilhar no WhatsApp</button>
+    <div class="container" id="main-content">
+        <div class="section" id="maquina-atual">
+            <h2>Máquina Atual</h2>
+            <label>Débito (%): <input type="text" id="atual-debito"></label>
+            <label>Crédito à Vista (%): <input type="text" id="atual-credito-vista"></label>
+            <label>Crédito 2x a 6x (%): <input type="text" id="atual-credito-2-6"></label>
+            <label>Crédito 7x a 12x (%): <input type="text" id="atual-credito-7-12"></label>
+            <label>Pix (%): <input type="text" id="atual-pix"></label>
+            <label>Aluguel (R$): <input type="text" id="atual-aluguel"></label>
+            <label>Quantidade de Máquinas: <input type="text" id="atual-quantidade"></label>
+            <div class="outros-label-container">
+                <label class="editable-label" data-for="atual-outros-real" onclick="editLabel(this)">Outros (R$):</label>
+                <input type="text" id="atual-outros-real">
+            </div>
+            <div class="outros-label-container">
+                <label class="editable-label" data-for="atual-outros-percentual" onclick="editLabel(this)">Outros (%):</label>
+                <input type="text" id="atual-outros-percentual">
+            </div>
+            <p class="small-text">Você pode alterar o nome do ítem "outros" clicando no nome.</p>
+        </div>
+        
+        <div class="section" id="oferta-stone">
+            <h2>Oferta Stone</h2>
+            <div id="stone-debito-container" style="display: none;">
+                <label>Débito (%): <input type="text" id="stone-debito"></label>
+            </div>
+            <div id="stone-credito-vista-container" style="display: none;">
+                <label>Crédito à Vista (%): <input type="text" id="stone-credito-vista"></label>
+            </div>
+            <div id="stone-credito-2-6-container" style="display: none;">
+                <label>Crédito 2x a 6x (%): <input type="text" id="stone-credito-2-6"></label>
+            </div>
+            <div id="stone-credito-7-12-container" style="display: none;">
+                <label>Crédito 7x a 12x (%): <input type="text" id="stone-credito-7-12"></label>
+            </div>
+            <div id="stone-pix-container" style="display: none;">
+                <label>Pix (%): <input type="text" id="stone-pix"></label>
+            </div>
+            <div id="stone-aluguel-container" style="display: none;">
+                <label>Aluguel (R$): <input type="text" id="stone-aluguel"></label>
+            </div>
+            <div id="stone-quantidade-container" style="display: none;">
+                <label>Quantidade de Máquinas: <input type="text" id="stone-quantidade"></label>
+            </div>
+            <div id="stone-outros-real-container" style="display: none;" class="outros-label-container">
+                <label class="editable-label" data-for="stone-outros-real" onclick="editLabel(this)">Outros (R$):</label>
+                <input type="text" id="stone-outros-real">
+            </div>
+            <div id="stone-outros-percentual-container" style="display: none;" class="outros-label-container">
+                <label class="editable-label" data-for="stone-outros-percentual" onclick="editLabel(this)">Outros (%):</label>
+                <input type="text" id="stone-outros-percentual">
+            </div>
+            <div style="margin-top: 20px;">
+                <label for="raio-x-checkbox">
+                    <input type="checkbox" id="raio-x-checkbox" onchange="toggleRaioX()">
+                    Raio-X
+                </label>
+            </div>
+            <div id="raio-x-container" style="display: none;">
+                <label>Valor do Raio-X (R$): <input type="text" id="raio-x-valor"></label>
+            </div>
+            <div style="margin-top: 10px;">
+                <label for="ipv-checkbox">
+                    <input type="checkbox" id="ipv-checkbox">
+                    Com IPV
+                </label>
+            </div>
+        </div>
+
+        <div class="section" id="valor-mensal">
+            <h2>Valor mensal de vendas (R$)</h2>
+            <div id="venda-debito-container" style="display: none;">
+                <label>Débito: <input type="text" id="venda-debito"></label>
+            </div>
+            <div id="venda-credito-vista-container" style="display: none;">
+                <label>Crédito à Vista: <input type="text" id="venda-credito-vista"></label>
+            </div>
+            <div id="venda-credito-2-6-container" style="display: none;">
+                <label>Crédito 2x a 6x: <input type="text" id="venda-credito-2-6"></label>
+            </div>
+            <div id="venda-credito-7-12-container" style="display: none;">
+                <label>Crédito 7x a 12x: <input type="text" id="venda-credito-7-12"></label>
+            </div>
+            <div id="venda-pix-container" style="display: none;">
+                <label>Pix: <input type="text" id="venda-pix"></label>
+            </div>
+            <div id="venda-outros-percentual-container" style="display: none;">
+                <label class="editable-label" data-for="venda-outros-percentual" onclick="editLabel(this)">Outros (%):</label>
+                <input type="text" id="venda-outros-percentual">
+            </div>
+        </div>
+        
+        <button id="calcular-button" onclick="calcular()">Calcular</button>
+        
+        <div id="error-messages"></div>
+        <div id="resultado"></div>
+    </div>
 
     <script>
-        function formatarMoeda(input) {
-            let valor = input.value.replace(/\D/g, '');
-            valor = (valor/100).toFixed(2) + '';
-            valor = valor.replace(".", ",");
-            valor = valor.replace(/(\d)(\d{3})(\d{3}),/g, "$1.$2.$3,");
-            valor = valor.replace(/(\d)(\d{3}),/g, "$1.$2,");
-            input.value = valor;
+        let currentFontSize = 3; 
+
+        function updateFontSize() {
+            document.body.className = `font-size-${currentFontSize}`;
         }
 
-        function calcularDiferencas() {
-            const taxaDebitoAtual = parseFloat(document.getElementById('taxaDebitoAtual').value.replace(',', '.')) || 0;
-            const taxaCreditoAtual = parseFloat(document.getElementById('taxaCreditoAtual').value.replace(',', '.')) || 0;
-            const taxaPixAtual = parseFloat(document.getElementById('taxaPixAtual').value.replace(',', '.')) || 0;
-            const aluguelMaquininhaAtual = parseFloat(document.getElementById('aluguelMaquininhaAtual').value.replace('.', '').replace(',', '.')) || 0;
-            const quantAtual = parseInt(document.getElementById('quantAtual').value) || 1;
+        function increaseFontSize() {
+            if (currentFontSize < 5) {
+                currentFontSize++;
+                updateFontSize();
+            }
+        }
+
+        function decreaseFontSize() {
+            if (currentFontSize > 1) {
+                currentFontSize--;
+                updateFontSize();
+            }
+        }
+
+        function resetFontSize() {
+            currentFontSize = 3;
+            updateFontSize();
+        }
+
+        document.getElementById('increase-font').addEventListener('click', increaseFontSize);
+        document.getElementById('decrease-font').addEventListener('click', decreaseFontSize);
+        document.getElementById('reset-font').addEventListener('click', resetFontSize);
+
+        function formatToBrazilianCurrency(number) {
+            return number.toLocaleString('pt-BR', { minimumFractionDigits: 2, maximumFractionDigits: 2 });
+        }
+
+        function formatDifference(value, percentage = null) {
+            const formattedValue = formatToBrazilianCurrency(Math.abs(value));
+            let result = '';
+            if (value > 0) {
+                result = `<span class="positivo">Você vai economizar ${formattedValue}`;
+            } else if (value < 0) {
+                result = `<span class="negativo">Você irá investir ${formattedValue}`;
+            } else {
+                result = `<span class="neutro">${formattedValue}`;
+            }
             
-            const taxaDebitoStone = parseFloat(document.getElementById('taxaDebitoStone').value.replace(',', '.')) || 0;
-            const taxaCreditoStone = parseFloat(document.getElementById('taxaCreditoStone').value.replace(',', '.')) || 0;
-            const taxaPixStone = parseFloat(document.getElementById('taxaPixStone').value.replace(',', '.')) || 0;
-            const aluguelMaquininhaStone = parseFloat(document.getElementById('aluguelMaquininhaStone').value.replace('.', '').replace(',', '.')) || 0;
-            const quantStone = parseInt(document.getElementById('quantStone').value) || 1;
-
-            const diferencaDebito = taxaDebitoAtual - taxaDebitoStone;
-            const diferencaCredito = taxaCreditoAtual - taxaCreditoStone;
-            const diferencaPix = taxaPixAtual - taxaPixStone;
-            const diferencaAluguel = (aluguelMaquininhaAtual * quantAtual) - (aluguelMaquininhaStone * quantStone);
-
-            const valorDebito = parseFloat(document.getElementById('valorDebito').value.replace('.', '').replace(',', '.')) || 0;
-            const valorCredito = parseFloat(document.getElementById('valorCredito').value.replace('.', '').replace(',', '.')) || 0;
-            const valorPix = parseFloat(document.getElementById('valorPix').value.replace('.', '').replace(',', '.')) || 0;
-
-            const ganhoPerdaDebito = (diferencaDebito * valorDebito) / 100;
-            const ganhoPerdaCredito = (diferencaCredito * valorCredito) / 100;
-            const ganhoPerdaPix = (diferencaPix * valorPix) / 100;
-            const ganhoPerdaAluguel = diferencaAluguel;
-            const ganhoPerdaTotal = ganhoPerdaDebito + ganhoPerdaCredito + ganhoPerdaPix + ganhoPerdaAluguel;
-            const totalPorAno = ganhoPerdaTotal * 12;
-
-            document.getElementById('diferencaDebito').textContent = diferencaDebito.toFixed(2).replace('.', ',') + ' %';
-            document.getElementById('ganhoPerdaDebito').textContent = ganhoPerdaDebito.toFixed(2).replace('.', ',') + ' R$';
-            document.getElementById('diferencaCredito').textContent = diferencaCredito.toFixed(2).replace('.', ',') + ' %';
-            document.getElementById('ganhoPerdaCredito').textContent = ganhoPerdaCredito.toFixed(2).replace('.', ',') + ' R$';
-            document.getElementById('diferencaPix').textContent = diferencaPix.toFixed(2).replace('.', ',') + ' %';
-            document.getElementById('ganhoPerdaPix').textContent = ganhoPerdaPix.toFixed(2).replace('.', ',') + ' R$';
-            document.getElementById('diferencaAluguel').textContent = diferencaAluguel.toFixed(2).replace('.', ',') + ' R$';
-            document.getElementById('ganhoPerdaAluguel').textContent = ganhoPerdaAluguel.toFixed(2).replace('.', ',') + ' R$';
-            document.getElementById('ganhoPerdaTotal').textContent = ganhoPerdaTotal.toFixed(2).replace('.', ',') + ' R$';
-            document.getElementById('totalPorAno').textContent = totalPorAno.toFixed(2).replace('.', ',') + ' R$';
-
-            // Remover as classes antes de adicionar a nova
-            document.getElementById('ganhoPerdaDebito').classList.remove('mais-baratos', 'mais-caros');
-            document.getElementById('ganhoPerdaCredito').classList.remove('mais-baratos', 'mais-caros');
-            document.getElementById('ganhoPerdaPix').classList.remove('mais-baratos', 'mais-caros');
-            document.getElementById('ganhoPerdaAluguel').classList.remove('mais-baratos', 'mais-caros');
-            document.getElementById('ganhoPerdaTotal').classList.remove('mais-baratos', 'mais-caros');
-            document.getElementById('totalPorAno').classList.remove('mais-baratos', 'mais-caros');
-
-            if (ganhoPerdaDebito > 0) {
-                document.getElementById('ganhoPerdaDebito').classList.add('mais-baratos');
-            } else if (ganhoPerdaDebito < 0) {
-                document.getElementById('ganhoPerdaDebito').classList.add('mais-caros');
+            if (percentage !== null) {
+                result += ` (${percentage.toFixed(2)}%)`;
             }
-
-            if (ganhoPerdaCredito > 0) {
-                document.getElementById('ganhoPerdaCredito').classList.add('mais-baratos');
-            } else if (ganhoPerdaCredito < 0) {
-                document.getElementById('ganhoPerdaCredito').classList.add('mais-caros');
-            }
-
-            if (ganhoPerdaPix > 0) {
-                document.getElementById('ganhoPerdaPix').classList.add('mais-baratos');
-            } else if (ganhoPerdaPix < 0) {
-                document.getElementById('ganhoPerdaPix').classList.add('mais-caros');
-            }
-
-            if (ganhoPerdaAluguel > 0) {
-                document.getElementById('ganhoPerdaAluguel').classList.add('mais-baratos');
-            } else if (ganhoPerdaAluguel < 0) {
-                document.getElementById('ganhoPerdaAluguel').classList.add('mais-caros');
-            }
-
-            if (ganhoPerdaTotal > 0) {
-                document.getElementById('ganhoPerdaTotal').classList.add('mais-baratos');
-            } else if (ganhoPerdaTotal < 0) {
-                document.getElementById('ganhoPerdaTotal').classList.add('mais-caros');
-            }
-
-            if (totalPorAno > 0) {
-                document.getElementById('totalPorAno').classList.add('mais-baratos');
-            } else if (totalPorAno < 0) {
-                document.getElementById('totalPorAno').classList.add('mais-caros');
-            }
+            
+            result += '</span>';
+            return result;
         }
 
-        function salvarDados() {
-            let dados = {
-                taxaDebitoAtual: document.getElementById('taxaDebitoAtual').value,
-                taxaCreditoAtual: document.getElementById('taxaCreditoAtual').value,
-                taxaPixAtual: document.getElementById('taxaPixAtual').value,
-                aluguelMaquininhaAtual: document.getElementById('aluguelMaquininhaAtual').value,
-                quantAtual: document.getElementById('quantAtual').value,
-                taxaDebitoStone: document.getElementById('taxaDebitoStone').value,
-                taxaCreditoStone: document.getElementById('taxaCreditoStone').value,
-                taxaPixStone: document.getElementById('taxaPixStone').value,
-                aluguelMaquininhaStone: document.getElementById('aluguelMaquininhaStone').value,
-                quantStone: document.getElementById('quantStone').value,
-                valorDebito: document.getElementById('valorDebito').value,
-                valorCredito: document.getElementById('valorCredito').value,
-                valorPix: document.getElementById('valorPix').value
-            };
-
-            let blob = new Blob([JSON.stringify(dados)], {type: "application/json"});
-            let url = URL.createObjectURL(blob);
-
-            let a = document.createElement('a');
-            a.download = "dados.json";
-            a.href = url;
-            a.click();
+        function formatCurrency(input) {
+            let value = input.value.replace(/\D/g, '');
+            value = (parseInt(value) / 100).toFixed(2) + '';
+            value = value.replace(".", ",");
+            value = value.replace(/(\d)(\d{3})(\,\d{2})$/g, "$1.$2$3");
+            input.value = value;
         }
 
-        function carregarDados(event) {
-            let input = event.target;
-
-            let reader = new FileReader();
-            reader.onload = function(){
-                let dados = JSON.parse(reader.result);
-
-                document.getElementById('taxaDebitoAtual').value = dados.taxaDebitoAtual;
-                document.getElementById('taxaCreditoAtual').value = dados.taxaCreditoAtual;
-                document.getElementById('taxaPixAtual').value = dados.taxaPixAtual;
-                document.getElementById('aluguelMaquininhaAtual').value = dados.aluguelMaquininhaAtual;
-                document.getElementById('quantAtual').value = dados.quantAtual;
-                document.getElementById('taxaDebitoStone').value = dados.taxaDebitoStone;
-                document.getElementById('taxaCreditoStone').value = dados.taxaCreditoStone;
-                document.getElementById('taxaPixStone').value = dados.taxaPixStone;
-                document.getElementById('aluguelMaquininhaStone').value = dados.aluguelMaquininhaStone;
-                document.getElementById('quantStone').value = dados.quantStone;
-                document.getElementById('valorDebito').value = dados.valorDebito;
-                document.getElementById('valorCredito').value = dados.valorCredito;
-                document.getElementById('valorPix').value = dados.valorPix;
-            };
-            reader.readAsText(input.files[0]);
+        function parseInputValue(id) {
+            const element = document.getElementById(id);
+            const value = element.value.replace(/\./g, '').replace(',', '.');
+            if (id.endsWith('quantidade') && value === '') {
+                const aluguelId = id.replace('quantidade', 'aluguel');
+                const aluguelValue = document.getElementById(aluguelId).value.trim();
+                return aluguelValue === '' ? 0 : 1;
+            }
+            return value === '' ? 0 : parseFloat(value) || 0;
         }
 
-        function compartilharWhatsApp() {
-            let taxaDebitoAtual = document.getElementById('taxaDebitoAtual').value;
-            let taxaCreditoAtual = document.getElementById('taxaCreditoAtual').value;
-            let taxaPixAtual = document.getElementById('taxaPixAtual').value;
-            let aluguelMaquininhaAtual = document.getElementById('aluguelMaquininhaAtual').value;
-            let quantAtual = document.getElementById('quantAtual').value;
-            let taxaDebitoStone = document.getElementById('taxaDebitoStone').value;
-            let taxaCreditoStone = document.getElementById('taxaCreditoStone').value;
-            let taxaPixStone = document.getElementById('taxaPixStone').value;
-            let aluguelMaquininhaStone = document.getElementById('aluguelMaquininhaStone').value;
-            let quantStone = document.getElementById('quantStone').value;
-            let valorDebito = document.getElementById('valorDebito').value;
-            let valorCredito = document.getElementById('valorCredito').value;
-            let valorPix = document.getElementById('valorPix').value;
-
-                                  let diferencaDebito = document.getElementById('diferencaDebito').textContent;
-            let ganhoPerdaDebito = document.getElementById('ganhoPerdaDebito').textContent;
-            let diferencaCredito = document.getElementById('diferencaCredito').textContent;
-            let ganhoPerdaCredito = document.getElementById('ganhoPerdaCredito').textContent;
-            let diferencaPix = document.getElementById('diferencaPix').textContent;
-            let ganhoPerdaPix = document.getElementById('ganhoPerdaPix').textContent;
-            let diferencaAluguel = document.getElementById('diferencaAluguel').textContent;
-            let ganhoPerdaAluguel = document.getElementById('ganhoPerdaAluguel').textContent;
-            let ganhoPerdaTotal = document.getElementById('ganhoPerdaTotal').textContent;
-            let totalPorAno = document.getElementById('totalPorAno').textContent;
-
-           let mensagem = "*Taxas Atuais*" +
-                           "\nTaxa de Débito: *" + taxaDebitoAtual + "%*" +
-                           "\nTaxa de Crédito: *" + taxaCreditoAtual + "%*" +
-                           "\nTaxa de Pix: *" + taxaPixAtual + "%*" +
-                           "\nAluguel: *" + aluguelMaquininhaAtual + "R$*" +
-                           "\nQuantidade(s): *" + quantAtual + "un(s)*" +
-                           "\n" +
-                           "\n*Taxas Stone*" +
-                           "\nTaxa de Débito: *" + taxaDebitoStone + "%*" +
-                           "\nTaxa de Crédito: *" + taxaCreditoStone + "%*" +
-                           "\nTaxa de Pix: *" + taxaPixStone + "%*" +
-                           "\nAluguel: *" + aluguelMaquininhaStone + "R$*" +
-                           "\nQuantidade(s): *" + quantStone + "un(s)*" +
-                           "\n" +
-                           "\n*Valores de Transação*" +
-                           "\nValor Débito: *" + valorDebito + "R$*" +
-                           "\nValor Crédito: *" + valorCredito + "R$*" +
-                           "\nValor Pix: *" + valorPix + "R$*" +
-                           "\n" +
-                           "\n*Diferenças*" +
-                           "\nTaxa (Débito): *" + diferencaDebito + "*" +
-                           "\nValor Débito: *" + ganhoPerdaDebito + "*" +
-                           "\nTaxa (Crédito): *" + diferencaCredito + "*" +
-                           "\nValor Crédito: *" + ganhoPerdaCredito + "*" +
-                           "\nTaxa (Pix): *" + diferencaPix + "*" +
-                           "\nValor Pix: *" + ganhoPerdaPix + "*" +
-                           "\nValor de Aluguel: *" + diferencaAluguel + "*" +
-                           "\n" +
-                           "\n*Resultado Final*" +
-                           "\nTotal Mêsl: *" + ganhoPerdaTotal + "*" +
-                           "\nTotal por Ano: *" + totalPorAno + "*";
-
-            let url = 'https://api.whatsapp.com/send?text=' + encodeURIComponent(mensagem);
-            window.open(url);
+        function calculatePercentageDifference(atual, stone) {
+            return atual - stone;
         }
-    </script>
-</body>
-</html>
+
+        function calcular() {
+            document.getElementById('error-messages').innerHTML = '';
+
+            const atualDebito = parseInputValue('atual-debito');
+            const atualCreditoVista = parseInputValue('atual-credito-vista');
+            const atualCredito26 = parseInputValue('atual-credito-2-6');
+            const atualCredito712 = parseInputValue('atual-credito-7-12');
+            const atualPix = parseInputValue('atual-pix');
+            const atualOutrosPercentual = parseInputValue('atual-outros-percentual');
+
+            const stoneDebito = parseInputValue('stone-debito');
+            const stoneCreditoVista = parseInputValue('stone-credito-vista');
+            const stoneCredito26 = parseInputValue('stone-credito-2-6');
+            const stoneCredito712 = parseInputValue('stone-credito-7-12');
+            const stonePix = parseInputValue('stone-pix');
+            const stoneOutrosPercentual = parseInputValue('stone-outros-percentual');
+
+            const vendaDebito = parseInputValue('venda-debito') ?? 0;
+            const vendaCreditoVista = parseInputValue('venda-credito-vista') ?? 0;
+            const vendaCredito26 = parseInputValue('venda-credito-2-6') ?? 0;
+            const vendaCredito712 = parseInputValue('venda-credito-7-12') ?? 0;
+            const vendaPix = parseInputValue('venda-pix') ?? 0;
+            const vendaOutrosPercentual = parseInputValue('venda-outros-percentual') ?? 0;
+
+            if ((atualDebito > 0 || stoneDebito > 0) && vendaDebito === 0) {
+                return displayErrorMessage("Por favor, insira o valor mensal de vendas para Débito.");
+            }
+            if ((atualCreditoVista > 0 || stoneCreditoVista > 0) && vendaCreditoVista === 0) {
+                return displayErrorMessage("Por favor, insira o valor mensal de vendas para Crédito à Vista.");
+            }
+            if ((atualCredito26 > 0 || stoneCredito26 > 0) && vendaCredito26 === 0) {
+                return displayErrorMessage("Por favor, insira o valor mensal de vendas para Crédito 2x a 6x.");
+            }
+            if ((atualCredito712 > 0 || stoneCredito712 > 0) && vendaCredito712 === 0) {
+                return displayErrorMessage("Por favor, insira o valor mensal de vendas para Crédito 7x a 12x.");
+            }
+            if ((atualPix > 0 || stonePix > 0) && vendaPix === 0) {
+                return displayErrorMessage("Por favor, insira o valor mensal de vendas para Pix.");
+            }
+            if ((atualOutrosPercentual > 0 || stoneOutrosPercentual > 0) && vendaOutrosPercentual === 0) {
+                return displayErrorMessage("Por favor, insira o valor mensal de vendas para Outros (%).");
+            }
+
+            const custoAtualDebito = vendaDebito * (atualDebito / 100);
+            const custoAtualCreditoVista = vendaCreditoVista * (atualCreditoVista / 100);
+            const custoAtualCredito26 = vendaCredito26 * (atualCredito26 / 100);
+            const custoAtualCredito712 = vendaCredito712 * (atualCredito712 / 100);
+            const custoAtualPix = vendaPix * (atualPix / 100);
+            const custoAtualAluguel = parseInputValue('atual-aluguel') * parseInputValue('atual-quantidade');
+            const vendaTotal = vendaDeb
