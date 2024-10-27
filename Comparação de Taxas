@@ -1,9 +1,9 @@
-<html><head><base href="https://stone.financeiro.app/">
+<html><head><base href="https://websim.financeiro.app/">
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
 <title>Negociação Stone</title>
 <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600&display=swap" rel="stylesheet">
-<link href="https://fonts.googleapis.com/icon?family=Material+Icons" rel="stylesheet">
+<link href="https://fonts.googleapis.com/icon?family=Material+Icons&display=swap" rel="stylesheet">
 <style>
 :root {
     --stone-green: #00B563;
@@ -68,6 +68,7 @@ body {
     color: var(--stone-dark);
     margin-bottom: 1.5rem;
     font-size: 1.5rem;
+    padding-right: 40px;
 }
 
 .tab-header {
@@ -260,7 +261,7 @@ body {
 .floating-button {
     position: fixed;
     bottom: 3rem;
-    left: 50%; 
+    left: 50%;
     transform: translateX(-50%);
     background-color: var(--stone-green);
     color: white;
@@ -277,7 +278,7 @@ body {
 
 .floating-button:hover {
     background-color: #009952;
-    transform: translateX(-50%) translateY(-2px); 
+    transform: translateX(-50%) translateY(-2px);
     box-shadow: 0 6px 16px rgba(0, 181, 99, 0.3);
 }
 
@@ -288,7 +289,7 @@ body {
     background-color: #ff4444;
     color: white;
     width: 48px;
-    height: 52px; /* Changed from 48px to match floating-button height */
+    height: 52px;
     border-radius: 8px;
     border: none;
     cursor: pointer;
@@ -311,6 +312,46 @@ body {
 
 .card.results-card {
     display: none;
+    position: relative;
+    transition: all 0.3s ease;
+    overflow: hidden;
+    padding-right: 40px;
+}
+
+.card.results-card.minimized {
+    max-height: 80px;
+    overflow: hidden;
+}
+
+.toggle-results-btn {
+    position: absolute;
+    top: 1.5rem;
+    right: 10px;
+    transform: none;
+    background-color: var(--stone-green);
+    color: white;
+    width: 40px;
+    height: 40px;
+    border: none;
+    border-radius: 8px;
+    cursor: pointer;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    transition: all 0.3s ease;
+    z-index: 10;
+}
+
+.toggle-results-btn:hover {
+    background-color: #009952;
+}
+
+.toggle-results-btn .material-icons {
+    transition: transform 0.3s ease;
+}
+
+.card.results-card.minimized .toggle-results-btn .material-icons {
+    transform: rotate(180deg);
 }
 
 .card.results-card.visible {
@@ -364,6 +405,96 @@ body {
     border: 1px solid #ffeeba;
     border-radius: 8px;
     color: #856404;
+}
+
+.result-cards-container {
+    display: flex;
+    overflow-x: auto;
+    scroll-snap-type: x mandatory;
+    gap: 1rem;
+    padding: 0.5rem;
+    margin: -0.5rem;
+    -webkit-overflow-scrolling: touch;
+}
+
+.result-card {
+    flex: 0 0 calc(100% - 2rem);
+    scroll-snap-align: start;
+    background-color: var(--stone-green);
+    color: white;
+    padding: 1rem;
+    border-radius: 8px;
+    min-width: 260px;
+    box-sizing: border-box;
+}
+
+.results-section {
+    border-top: 2px solid #eee;
+    margin-top: 2rem;
+    padding-top: 1rem;
+}
+
+.daily-comparison {
+    margin-top: 2rem;
+    padding: 1.5rem;
+    background-color: var(--stone-green);
+    border-radius: 8px;
+    color: white;
+    display: flex;
+    align-items: center;
+    gap: 1rem;
+    font-size: 1.1rem;
+    animation: pulse 2s infinite;
+}
+
+.daily-comparison .material-icons {
+    font-size: 2rem;
+}
+
+.tpv-comparison {
+    margin-top: 2rem;
+    padding: 1.5rem;
+    background-color: var(--stone-green);
+    border-radius: 8px;
+    color: white;
+    display: flex;
+    align-items: center;
+    gap: 1rem;
+    font-size: 1.1rem;
+    animation: pulse 2s infinite;
+}
+
+.tpv-comparison .material-icons {
+    font-size: 2rem;
+}
+
+.savings-comparison {
+    margin-top: 2rem;
+    padding: 1.5rem;
+    background-color: var(--stone-green);
+    border-radius: 8px;
+    color: white;
+    display: flex;
+    align-items: center;
+    gap: 1rem;
+    font-size: 1.1rem;
+    animation: pulse 2s infinite;
+}
+
+.savings-comparison .material-icons {
+    font-size: 2rem;
+}
+
+@keyframes pulse {
+    0% {
+        transform: scale(1);
+    }
+    50% {
+        transform: scale(1.02);
+    }
+    100% {
+        transform: scale(1);
+    }
 }
 
 @media (max-width: 480px) {
@@ -582,10 +713,13 @@ body {
     </div>
 
     <div class="card results-card">
-        <h2 class="card-title">Resultado</h2>
+        <h2 class="card-title">Resultado Detalhado</h2>
         <div id="resultado-content">
             <!-- Comparison results will be inserted here -->
         </div>
+        <button class="toggle-results-btn">
+            <span class="material-icons">expand_more</span>
+        </button>
     </div>
 </div>
 
@@ -793,12 +927,19 @@ document.addEventListener('DOMContentLoaded', function() {
     const resultsCard = document.querySelector('.results-card');
 
     compararButton.addEventListener('click', () => {
+        const existingTotalCards = document.querySelectorAll('.card:not(.results-card)');
+        existingTotalCards.forEach(card => {
+            if (card.querySelector('.card-title')?.textContent === 'Resultado Total') {
+                card.remove();
+            }
+        });
+
         resetButton.classList.add('visible');
         resultsCard.classList.add('visible');
+        setupResultsCard(); 
         compararOfertas();
         
-        // Smooth scroll to results card with offset
-        const headerHeight = 80; // Approximate header height to maintain visibility
+        const headerHeight = 80; 
         const resultsPosition = resultsCard.getBoundingClientRect().top + window.pageYOffset - headerHeight;
         
         window.scrollTo({
@@ -845,13 +986,65 @@ document.addEventListener('DOMContentLoaded', function() {
             resultsCard.classList.remove('visible');
             resetButton.classList.remove('visible');
             
-            // Scroll back to top
+            document.querySelectorAll('.card').forEach(card => {
+                if (card.querySelector('.card-title')?.textContent === 'Resultado Total') {
+                    card.remove();
+                }
+            });
+            
             window.scrollTo({
                 top: 0,
                 behavior: 'smooth'
             });
         }
     });
+
+    function formatCurrency(value) {
+        return value.toLocaleString('pt-BR', {
+            minimumFractionDigits: 2,
+            maximumFractionDigits: 2
+        });
+    }
+
+    function setupResultsCard() {
+        const resultsCard = document.querySelector('.card.results-card');
+        
+        const existingBtn = resultsCard.querySelector('.toggle-results-btn');
+        if (existingBtn) existingBtn.remove();
+        
+        const toggleBtn = document.createElement('button');
+        toggleBtn.className = 'toggle-results-btn';
+        toggleBtn.innerHTML = '<span class="material-icons">expand_more</span>';
+        resultsCard.appendChild(toggleBtn);
+        
+        toggleBtn.addEventListener('click', () => {
+            resultsCard.classList.toggle('minimized');
+        });
+        
+        resultsCard.classList.add('minimized');
+    }
+
+    function getDailyComparisonMessage(dailyValue) {
+        const messages = [
+            { max: 2.99, text: "Essa Oferta Stone equivale a apenas 1 cafézinho simples diário em uma padaria.", icon: "coffee" },
+            { max: 4.99, text: "Essa Oferta Stone equivale a apenas 1 pão de queijo ou 1 coxinha por dia.", icon: "bakery_dining" },
+            { max: 9.99, text: "Essa Oferta Stone equivale a apenas 1 água mineral ou 1 refrigerante por dia.", icon: "local_drink" },
+            { max: 19.99, text: "Essa Oferta Stone equivale a apenas 1 lanche rápido, como 1 salgado e 1 suco por dia.", icon: "lunch_dining" },
+            { max: 29.99, text: "Essa Oferta Stone equivale a apenas 1 almoço executivo ou um prato feito (PF) por dia.", icon: "restaurant" },
+            { max: 39.99, text: "Essa Oferta Stone equivale a apenas 1 almoço de balança em um restaurante.", icon: "restaurant_menu" },
+            { max: 49.99, text: "Essa Oferta Stone equivale a apenas 1 pizza média diária.", icon: "local_pizza" },
+            { max: 69.99, text: "Essa Oferta Stone equivale a apenas 1 assinatura mensal de streaming de vídeo ou música diária.", icon: "subscriptions" },
+            { max: 99.99, text: "Essa Oferta Stone equivale a uma ida a um parque de diversões ou museu no dia.", icon: "attractions" },
+            { max: Infinity, text: "Essa Oferta Stone equivale a um jantar em um restaurante por dia.", icon: "dinner_dining" }
+        ];
+
+        for (let msg of messages) {
+            if (dailyValue <= msg.max) {
+                return { text: msg.text, icon: msg.icon };
+            }
+        }
+        return messages[messages.length - 1];
+    }
 
     function compararOfertas() {
         const resultadoContent = document.getElementById('resultado-content');
@@ -866,7 +1059,7 @@ document.addEventListener('DOMContentLoaded', function() {
                 <div class="result-item">
                     <div class="result-title">Raio-X:</div>
                     <div class="result-detail economia">
-                        Economia: R$ ${economiaRaioX.toFixed(2)}
+                        Economia: R$ ${formatCurrency(economiaRaioX)}
                     </div>
                     <div class="result-detail" style="font-style: italic; margin-top: 10px;">
                         Nota: O Raio-X é um serviço cobrado mensalmente que não será cobrado na oferta Stone.
@@ -930,6 +1123,7 @@ document.addEventListener('DOMContentLoaded', function() {
                     Por favor, insira algum valor para que seja feita a comparação.
                 </div>
             `;
+            document.querySelector('.card.results-card').classList.remove('minimized');
             return;
         }
 
@@ -943,10 +1137,10 @@ document.addEventListener('DOMContentLoaded', function() {
                 debitoHTML = `
                     <div class="result-item">
                         <div class="result-title">Débito:</div>
-                        <div class="result-detail">Diferença de Taxa: ${Math.abs(diferencaDebito)}%</div>
+                        <div class="result-detail">Diferença de Taxa: ${formatCurrency(Math.abs(diferencaDebito))}%</div>
                         ${tpvDebito ? `
                             <div class="result-detail ${isEconomiaDebito ? 'economia' : 'investimento'}">
-                                ${isEconomiaDebito ? 'Economia' : 'Investimento'}: R$ ${valorMensalDebito}
+                                ${isEconomiaDebito ? 'Economia' : 'Investimento'}: R$ ${formatCurrency(valorMensalDebito)}
                             </div>
                         ` : ''}
                     </div>
@@ -966,10 +1160,10 @@ document.addEventListener('DOMContentLoaded', function() {
                 creditoHTML = `
                     <div class="result-item">
                         <div class="result-title">${(maquinaAtualAntecipacao || ofertaStoneAntecipacao) ? 'Crédito + Antecipação:' : 'Crédito:'}</div>
-                        <div class="result-detail">Diferença de Taxa: ${Math.abs(diferencaCredito)}%</div>
+                        <div class="result-detail">Diferença de Taxa: ${formatCurrency(Math.abs(diferencaCredito))}%</div>
                         ${tpvCredito ? `
                             <div class="result-detail ${isEconomiaCredito ? 'economia' : 'investimento'}">
-                                ${isEconomiaCredito ? 'Economia' : 'Investimento'}: R$ ${valorMensalCredito}
+                                ${isEconomiaCredito ? 'Economia' : 'Investimento'}: R$ ${formatCurrency(valorMensalCredito)}
                             </div>
                         ` : ''}
                     </div>
@@ -987,10 +1181,10 @@ document.addEventListener('DOMContentLoaded', function() {
                 pixHTML = `
                     <div class="result-item">
                         <div class="result-title">PIX:</div>
-                        <div class="result-detail">Diferença de Taxa: ${Math.abs(diferencaPix)}%</div>
+                        <div class="result-detail">Diferença de Taxa: ${formatCurrency(Math.abs(diferencaPix))}%</div>
                         ${tpvPix ? `
                             <div class="result-detail ${isEconomiaPix ? 'economia' : 'investimento'}">
-                                ${isEconomiaPix ? 'Economia' : 'Investimento'}: R$ ${valorMensalPix}
+                                ${isEconomiaPix ? 'Economia' : 'Investimento'}: R$ ${formatCurrency(valorMensalPix)}
                             </div>
                         ` : ''}
                     </div>
@@ -1014,12 +1208,15 @@ document.addEventListener('DOMContentLoaded', function() {
                 aluguelHTML = `
                 <div class="result-item">
                     <div class="result-title">Adesão vs Aluguel:</div>
-                    <div class="result-detail">Valor da adesão: R$ ${valorAdesao.toFixed(2)} 
-                        (${numeroParcelas}x de R$ ${valorParcelaAdesao.toFixed(2)})</div>
-                    <div class="result-detail">Valor atual do aluguel mensal: R$ ${totalMaquinaAtualAluguel.toFixed(2)}</div>
-                    <div class="result-detail">O valor da adesão equivale a ${mesesEquivalentes.toFixed(1)} meses de aluguel</div>
+                    <div class="result-detail">Valor da adesão: R$ ${formatCurrency(valorAdesao)} 
+                        (${numeroParcelas}x de R$ ${formatCurrency(valorParcelaAdesao)})</div>
+                    <div class="result-detail">Valor atual do aluguel mensal: R$ ${formatCurrency(totalMaquinaAtualAluguel)}</div>
+                    ${totalMaquinaAtualAluguel > 0 ? 
+                        `<div class="result-detail">O valor da adesão equivale a ${formatCurrency(mesesEquivalentes.toFixed(1))} meses de aluguel</div>`
+                        : ''
+                    }
                     <div class="result-detail ${economiaAno1 >= 0 ? 'economia' : 'investimento'}">
-                        ${economiaAno1 >= 0 ? 'Economia' : 'Investimento'} no primeiro ano: R$ ${Math.abs(economiaAno1).toFixed(2)}
+                        ${economiaAno1 >= 0 ? 'Economia' : 'Investimento'} no primeiro ano: R$ ${formatCurrency(Math.abs(economiaAno1))}
                     </div>
                     <div class="result-detail" style="font-style: italic; margin-top: 10px;">
                         Nota: A adesão é um pagamento único parcelado, enquanto o aluguel é uma despesa mensal permanente.
@@ -1039,15 +1236,15 @@ document.addEventListener('DOMContentLoaded', function() {
                             ''
                         }
                         <div class="result-detail">
-                            Valor atual: R$ ${totalMaquinaAtualAluguel.toFixed(2)} 
-                            (${maquinaAtualAluguel.toFixed(2)} × ${maquinaAtualQuant} ${maquinaAtualQuant > 1 ? 'máquinas' : 'máquina'})
+                            Valor atual: R$ ${formatCurrency(totalMaquinaAtualAluguel)} 
+                            (${formatCurrency(maquinaAtualAluguel.toFixed(2))} × ${maquinaAtualQuant} ${maquinaAtualQuant > 1 ? 'máquinas' : 'máquina'})
                         </div>
                         <div class="result-detail">
-                            Valor oferta: R$ ${totalOfertaStoneAluguel.toFixed(2)}
-                            ${!isIpvActive ? ` (${ofertaStoneAluguel.toFixed(2)} × ${ofertaStoneQuant} ${ofertaStoneQuant > 1 ? 'máquinas' : 'máquina'})` : ''}
+                            Valor oferta: R$ ${formatCurrency(totalOfertaStoneAluguel)}
+                            ${!isIpvActive ? ` (${formatCurrency(ofertaStoneAluguel.toFixed(2))} × ${ofertaStoneQuant} ${ofertaStoneQuant > 1 ? 'máquinas' : 'máquina'})` : ''}
                         </div>
                         <div class="result-detail ${isEconomiaAluguel ? 'economia' : 'investimento'}">
-                            ${isEconomiaAluguel ? 'Economia' : 'Investimento'}: R$ ${Math.abs(diferencaAluguel).toFixed(2)}
+                            ${isEconomiaAluguel ? 'Economia' : 'Investimento'}: R$ ${formatCurrency(Math.abs(diferencaAluguel))}
                         </div>
                     </div>
                 `;
@@ -1064,10 +1261,10 @@ document.addEventListener('DOMContentLoaded', function() {
                 credito2x6xHTML = `
                     <div class="result-item">
                         <div class="result-title">Crédito 2x a 6x:</div>
-                        <div class="result-detail">Diferença de Taxa: ${Math.abs(diferencaCredito2x6x)}%</div>
+                        <div class="result-detail">Diferença de Taxa: ${formatCurrency(Math.abs(diferencaCredito2x6x))}%</div>
                         ${tpvCredito2x6x ? `
                             <div class="result-detail ${isEconomiaCredito2x6x ? 'economia' : 'investimento'}">
-                                ${isEconomiaCredito2x6x ? 'Economia' : 'Investimento'}: R$ ${valorMensalCredito2x6x}
+                                ${isEconomiaCredito2x6x ? 'Economia' : 'Investimento'}: R$ ${formatCurrency(valorMensalCredito2x6x)}
                             </div>
                         ` : ''}
                     </div>
@@ -1085,10 +1282,10 @@ document.addEventListener('DOMContentLoaded', function() {
                 credito7x12xHTML = `
                     <div class="result-item">
                         <div class="result-title">Crédito 7x a 12x:</div>
-                        <div class="result-detail">Diferença de Taxa: ${Math.abs(diferencaCredito7x12x)}%</div>
+                        <div class="result-detail">Diferença de Taxa: ${formatCurrency(Math.abs(diferencaCredito7x12x))}%</div>
                         ${tpvCredito7x12x ? `
                             <div class="result-detail ${isEconomiaCredito7x12x ? 'economia' : 'investimento'}">
-                                ${isEconomiaCredito7x12x ? 'Economia' : 'Investimento'}: R$ ${valorMensalCredito7x12x}
+                                ${isEconomiaCredito7x12x ? 'Economia' : 'Investimento'}: R$ ${formatCurrency(valorMensalCredito7x12x)}
                             </div>
                         ` : ''}
                     </div>
@@ -1105,10 +1302,10 @@ document.addEventListener('DOMContentLoaded', function() {
             outros1HTML = `
                 <div class="result-item">
                     <div class="result-title">${outros1Label}:</div>
-                    <div class="result-detail">Valor atual: R$ ${maquinaAtualOutros1.toFixed(2)}</div>
-                    <div class="result-detail">Valor oferta: R$ ${ofertaStoneOutros1.toFixed(2)}</div>
+                    <div class="result-detail">Valor atual: R$ ${formatCurrency(maquinaAtualOutros1)}</div>
+                    <div class="result-detail">Valor oferta: R$ ${formatCurrency(ofertaStoneOutros1)}</div>
                     <div class="result-detail ${isEconomiaOutros1 ? 'economia' : 'investimento'}">
-                        ${isEconomiaOutros1 ? 'Economia' : 'Investimento'}: R$ ${Math.abs(diferencaOutros1).toFixed(2)}
+                        ${isEconomiaOutros1 ? 'Economia' : 'Investimento'}: R$ ${formatCurrency(Math.abs(diferencaOutros1))}
                     </div>
                 </div>
             `;
@@ -1123,10 +1320,10 @@ document.addEventListener('DOMContentLoaded', function() {
             outros2HTML = `
                 <div class="result-item">
                     <div class="result-title">${outros2Label}:</div>
-                    <div class="result-detail">Valor atual: R$ ${maquinaAtualOutros2.toFixed(2)}</div>
-                    <div class="result-detail">Valor oferta: R$ ${ofertaStoneOutros2.toFixed(2)}</div>
+                    <div class="result-detail">Valor atual: R$ ${formatCurrency(maquinaAtualOutros2)}</div>
+                    <div class="result-detail">Valor oferta: R$ ${formatCurrency(ofertaStoneOutros2)}</div>
                     <div class="result-detail ${isEconomiaOutros2 ? 'economia' : 'investimento'}">
-                        ${isEconomiaOutros2 ? 'Economia' : 'Investimento'}: R$ ${Math.abs(diferencaOutros2).toFixed(2)}
+                        ${isEconomiaOutros2 ? 'Economia' : 'Investimento'}: R$ ${formatCurrency(Math.abs(diferencaOutros2))}
                     </div>
                 </div>
             `;
@@ -1149,10 +1346,10 @@ document.addEventListener('DOMContentLoaded', function() {
                         parcelasHTML += `
                             <div class="result-item">
                                 <div class="result-title">Parcela ${i}x:</div>
-                                <div class="result-detail">Diferença de Taxa: ${Math.abs(diferencaParcela)}%</div>
+                                <div class="result-detail">Diferença de Taxa: ${formatCurrency(Math.abs(diferencaParcela))}%</div>
                                 ${tpvParcela ? `
                                     <div class="result-detail ${isEconomiaParcela ? 'economia' : 'investimento'}">
-                                        ${isEconomiaParcela ? 'Economia' : 'Investimento'}: R$ ${valorMensalParcela}
+                                        ${isEconomiaParcela ? 'Economia' : 'Investimento'}: R$ ${formatCurrency(valorMensalParcela)}
                                     </div>
                                 ` : ''}
                             </div>
@@ -1185,7 +1382,6 @@ document.addEventListener('DOMContentLoaded', function() {
             tempDiv.innerHTML = resultHTML;
             
             tempDiv.querySelectorAll('.result-item').forEach(item => {
-                // Skip yearly calculations for adesão
                 if (item.querySelector('.result-title').textContent.includes('Adesão vs Aluguel')) {
                     return;
                 }
@@ -1201,12 +1397,9 @@ document.addEventListener('DOMContentLoaded', function() {
             
             const resultadoMensalTotal = totalEconomiaMensal - totalInvestimentoMensal;
 
-            // Calculate annual result only if monthly result is positive
             let resultadoAnualHTML = '';
             if (resultadoMensalTotal > 0) {
                 let resultadoAnualTotal = resultadoMensalTotal * 12;
-                
-                // If adesão is checked, add first year savings and investment
                 const isAdesaoActive = document.querySelector('input[name="adesao"]').checked;
                 if (isAdesaoActive) {
                     const maquinaAtualAluguel = parseFloat(document.querySelector(`#${maquinaAtualTab} input[name="aluguel"]`).value) || 0;
@@ -1216,52 +1409,59 @@ document.addEventListener('DOMContentLoaded', function() {
                     const totalMaquinaAtualAluguel = maquinaAtualAluguel * maquinaAtualQuant;
                     const economiaAno1 = (totalMaquinaAtualAluguel * 12) - ofertaStoneAluguel;
                     
-                    // Subtract adesão investment from annual total
                     resultadoAnualTotal = resultadoAnualTotal + economiaAno1 - ofertaStoneAluguel;
 
+                    const showAdesaoText = ofertaStoneAluguel > 0;
+
                     resultadoAnualHTML = `
-                        <div class="result-detail" style="font-weight: bold; margin-top: 1rem;">
+                        <div class="result-detail" style="font-weight: bold; margin-top: 1rem; background-color: var(--stone-green); color: white; padding: 1rem; border-radius: 8px;">
                             ${resultadoAnualTotal >= 0 ? `
                                 Resultado Anual Total: 
-                                <span class="economia">
-                                    R$ ${resultadoAnualTotal.toFixed(2)}
-                                    (incluindo economia da Adesão no primeiro ano)
+                                <span style="color: white;">
+                                    R$ ${formatCurrency(resultadoAnualTotal)}
+                                    ${showAdesaoText ? '(incluindo economia da Adesão no primeiro ano)' : ''}
                                 </span>
                             ` : `
                                 <div>
                                     Resultado Anual Total: 
-                                    <span class="investimento">
-                                        R$ ${Math.abs(resultadoAnualTotal).toFixed(2)}
-                                        (incluindo investimento da Adesão)
+                                    <span style="color: white;">
+                                        R$ ${formatCurrency(Math.abs(resultadoAnualTotal))}
+                                        ${showAdesaoText ? '(incluindo investimento da Adesão)' : ''}
                                     </span>
                                 </div>
                                 <div style="margin-top: 0.5rem;">
                                     Resultado Anual sem a Adesão: 
-                                    <span class="economia">
-                                        R$ ${(resultadoMensalTotal * 12).toFixed(2)}
+                                    <span style="color: white;">
+                                        R$ ${formatCurrency((resultadoMensalTotal * 12))}
                                     </span>
                                 </div>
                             `}
                         </div>
-                        <div class="result-detail" style="font-style: italic; margin-top: 0.5rem; font-size: 0.9rem;">
-                            Nota: O resultado anual inclui a economia mensal mais a economia gerada pela Adesão no primeiro ano.
-                        </div>
+                        ${showAdesaoText ? `
+                            <div class="result-detail" style="font-style: italic; margin-top: 0.5rem; font-size: 0.9rem;">
+                                Nota: O resultado anual inclui a economia mensal mais a economia gerada pela Adesão no primeiro ano.
+                            </div>
+                        ` : ''}
                     `;
                 } else {
                     resultadoAnualHTML = `
-                        <div class="result-detail" style="font-weight: bold; margin-top: 1rem;">
+                        <div class="result-detail" style="font-weight: bold; margin-top: 1rem; background-color: var(--stone-green); color: white; padding: 1rem; border-radius: 8px;">
                             Resultado Anual Total: 
-                            <span class="economia">
-                                R$ ${resultadoAnualTotal.toFixed(2)}
+                            <span style="color: white;">
+                                R$ ${formatCurrency(resultadoAnualTotal)}
                             </span>
                         </div>
                     `;
                 }
             }
 
-            resultHTML += `
-                <div class="result-item" style="border-top: 2px solid #eee; margin-top: 2rem; padding-top: 1rem;">
-                    <div class="result-title">Resultado Total:</div>
+            resultadoContent.innerHTML = resultHTML;
+
+            const totalResultsCard = document.createElement('div');
+            totalResultsCard.classList.add('card');
+            totalResultsCard.innerHTML = `
+                <h2 class="card-title">Resultado Total</h2>
+                <div class="results-section">
                     ${(() => {
                         const isAdesaoActive = document.querySelector('input[name="adesao"]').checked;
                         const maquinaAtualAluguel = parseFloat(document.querySelector(`#${maquinaAtualTab} input[name="aluguel"]`).value) || 0;
@@ -1269,33 +1469,88 @@ document.addEventListener('DOMContentLoaded', function() {
                         const ofertaStoneQuant = parseFloat(document.querySelector(`#${ofertaStoneTab} input[name="quant_maquinas"]`).value) || 12;
                         
                         let adesaoHTML = '';
-                        if (isAdesaoActive && maquinaAtualAluguel === 0) {
+                        if (isAdesaoActive && maquinaAtualAluguel === 0 && ofertaStoneAluguel !== 0) {
                             const valorParcela = ofertaStoneAluguel / ofertaStoneQuant;
                             adesaoHTML = `
                                 <div class="result-detail" style="margin-bottom: 1rem;">
-                                    <span class="investimento">Investimento Adesão: R$ ${ofertaStoneAluguel.toFixed(2)}</span>
+                                    <span class="investimento">Investimento Adesão: R$ ${formatCurrency(ofertaStoneAluguel)}</span>
                                     <br>
                                     <span class="investimento" style="font-size: 0.9rem;">
-                                        (${ofertaStoneQuant}x de R$ ${valorParcela.toFixed(2)})
+                                        (${ofertaStoneQuant}x de R$ ${formatCurrency(valorParcela)})
                                     </span>
                                 </div>
                             `;
                         }
                         return adesaoHTML;
                     })()}
-                    <div class="result-detail" style="font-weight: bold;">
-                        Resultado Mensal Total: 
-                        <span class="${resultadoMensalTotal >= 0 ? 'economia' : 'investimento'}">
-                            R$ ${Math.abs(resultadoMensalTotal).toFixed(2)}
-                            ${resultadoMensalTotal >= 0 ? ' (Economia)' : ' (Investimento)'}
-                        </span>
+                    <div class="result-cards-container">
+                        <div class="result-card">
+                            <div style="font-weight: bold;">
+                                Resultado Mensal Total: 
+                                <span class="${resultadoMensalTotal >= 0 ? 'economia' : 'investimento'}" style="color: white;">
+                                    R$ ${formatCurrency(Math.abs(resultadoMensalTotal))}
+                                    ${resultadoMensalTotal >= 0 ? ' (Economia)' : ' (Investimento)'}
+                                </span>
+                            </div>
+                        </div>
+                        ${resultadoMensalTotal < 0 ? `
+                            <div class="result-card">
+                                <div style="font-weight: bold;">
+                                    Investimento Diário: R$ ${formatCurrency(Math.abs(resultadoMensalTotal) / 30)}
+                                </div>
+                            </div>
+                        ` : ''}
+                        ${resultadoAnualHTML ? `
+                            <div class="result-card">
+                                <div style="font-weight: bold;">
+                                    ${resultadoAnualHTML.replace(/<div[^>]*>|<\/div>|<span[^>]*>|<\/span>/g, '')}
+                                </div>
+                            </div>
+                        ` : ''}
+                        ${resultadoMensalTotal > 0 ? `
+                            <div class="savings-comparison">
+                                <span class="material-icons">stars</span>
+                                <div>Parabéns! Esta é a melhor oferta Stone para o seu negócio! Aproveite os benefícios de uma parceria que valoriza o seu crescimento!</div>
+                            </div>
+                        ` : ''}
                     </div>
-                    ${resultadoAnualHTML}
                 </div>
             `;
-        }
+            
+            const resultsCard = document.querySelector('.card.results-card');
+            resultsCard.parentNode.insertBefore(totalResultsCard, resultsCard);
 
-        resultadoContent.innerHTML = resultHTML;
+            if (resultadoMensalTotal < 0) {
+                const tpvDebito = parseFloat(document.querySelector('input[name="tpv_debito"]').value) || 0;
+                const tpvCredito = parseFloat(document.querySelector('input[name="tpv_credito"]').value) || 0;
+                const tpvPix = parseFloat(document.querySelector('input[name="tpv_pix"]').value) || 0;
+                const tpvCredito2x6x = parseFloat(document.querySelector('input[name="tpv_credito_2x_6x"]').value) || 0;
+                const tpvCredito7x12x = parseFloat(document.querySelector('input[name="tpv_credito_7x_12x"]').value) || 0;
+
+                const totalTpv = tpvDebito + tpvCredito + tpvPix + tpvCredito2x6x + tpvCredito7x12x;
+
+                if (totalTpv > 0) {
+                    const percentageOfTpv = (Math.abs(resultadoMensalTotal) / totalTpv) * 100;
+                    
+                    totalResultsCard.querySelector('.results-section').insertAdjacentHTML('beforeend', `
+                        <div class="tpv-comparison">
+                            <span class="material-icons">savings</span>
+                            <div>Essa Oferta Stone equivale apenas a ${percentageOfTpv.toFixed(2)}% do volume informado de venda mensal R$ ${formatCurrency(totalTpv)}</div>
+                        </div>
+                    `);
+                }
+
+                const dailyValue = Math.abs(resultadoMensalTotal) / 30;
+                const comparison = getDailyComparisonMessage(dailyValue);
+                
+                totalResultsCard.querySelector('.results-section').insertAdjacentHTML('beforeend', `
+                    <div class="daily-comparison">
+                        <span class="material-icons">${comparison.icon}</span>
+                        <div>${comparison.text}</div>
+                    </div>
+                `);
+            }
+        }
     }
 });
 </script>
