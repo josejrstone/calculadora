@@ -1,776 +1,701 @@
-<html><head><base href="https://websim.financeiro.app/">
-<meta charset="UTF-8">
-<meta name="viewport" content="width=device-width, initial-scale=1.0">
-<title>Negociação Stone</title>
-<link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600&display=swap" rel="stylesheet">
-<link href="https://fonts.googleapis.com/icon?family=Material+Icons&display=swap" rel="stylesheet">
-<style>
-:root {
-    --stone-green: #00B563;
-    --stone-dark: #1a1a1a;
-}
-
-body {
-    font-family: 'Inter', sans-serif;
-    margin: 0;
-    padding: 100px 0 120px 0;
-    background-color: #f5f5f5;
-    min-height: 100vh;
-}
-
-.header {
-    background-color: var(--stone-green);
-    color: white;
-    padding: 2rem 0;
-    text-align: left;
-    margin-bottom: 2rem;
-    position: fixed;
-    top: 0;
-    left: 0;
-    width: 100%;
-    z-index: 1000;
-    transition: all 0.3s ease;
-    box-sizing: border-box;
-}
-
-.header-content {
-    display: flex;
-    justify-content: space-between;
-    align-items: center;
-    max-width: 1000px;
-    margin: 0 auto;
-    padding: 0 1rem;
-}
-
-.menu-button {
-    background: none;
-    border: none;
-    color: white;
-    cursor: pointer;
-    padding: 8px;
-    display: flex;
-    align-items: center;
-    justify-content: center;
-    border-radius: 50%;
-    transition: background-color 0.3s;
-}
-
-.menu-button:hover {
-    background-color: rgba(255, 255, 255, 0.1);
-}
-
-.menu-button .material-icons {
-    font-size: 24px;
-}
-
-.header h1 {
-    margin: 0;
-    transition: all 0.3s ease;
-    font-size: 2rem;
-}
-
-.header.scrolled {
-    padding: 0.5rem 0;
-}
-
-.header.scrolled h1 {
-    font-size: 1.2rem;
-}
-
-.container {
-    max-width: 1000px;
-    margin: 0 auto;
-    padding: 0 1rem;
-    box-sizing: border-box;
-}
-
-.card {
-    background: white;
-    border-radius: 12px;
-    box-shadow: 0 4px 20px rgba(0,0,0,0.08);
-    padding: 1.5rem;
-    margin-bottom: 2rem;
-    width: 100%;
-    box-sizing: border-box;
-}
-
-.card-title {
-    color: var(--stone-dark);
-    margin-bottom: 1.5rem;
-    font-size: 1.5rem;
-    padding-right: 40px;
-}
-
-.tab-header {
-    display: flex;
-    align-items: center;
-    margin-bottom: 2rem;
-    border-bottom: 2px solid #eee;
-}
-
-.tab {
-    padding: 0.75rem 1rem;
-    cursor: pointer;
-    border: none;
-    background: none;
-    font-size: 0.9rem;
-    font-weight: 500;
-    color: #666;
-    transition: all 0.3s ease;
-}
-
-.tab.active {
-    color: var(--stone-green);
-    border-bottom: 2px solid var(--stone-green);
-    margin-bottom: -2px;
-}
-
-.change-tab-btn {
-    background: none;
-    border: none;
-    color: var(--stone-green);
-    cursor: pointer;
-    padding: 0.5rem;
-    margin-left: 0.5rem;
-    display: flex;
-    align-items: center;
-    justify-content: center;
-    border-radius: 50%;
-    transition: background-color 0.3s;
-}
-
-.change-tab-btn:hover {
-    background-color: rgba(0, 181, 99, 0.1);
-}
-
-.change-tab-btn .material-icons {
-    font-size: 20px;
-}
-
-.tab-dropdown {
-    position: absolute;
-    background: white;
-    box-shadow: 0 2px 10px rgba(0,0,0,0.1);
-    border-radius: 8px;
-    padding: 0.5rem 0;
-    display: none;
-    z-index: 100;
-}
-
-.tab-dropdown.show {
-    display: block;
-}
-
-.tab-dropdown button {
-    display: block;
-    width: 100%;
-    padding: 0.75rem 1rem;
-    border: none;
-    background: none;
-    text-align: left;
-    cursor: pointer;
-    font-size: 0.9rem;
-    color: var(--stone-dark);
-}
-
-.tab-dropdown button:hover {
-    background-color: #f5f5f5;
-}
-
-.tab-content {
-    display: none;
-}
-
-.tab-content.active {
-    display: block;
-}
-
-.form-grid, .parcelas-grid {
-    display: grid;
-    grid-template-columns: repeat(2, 1fr);
-    gap: 1rem;
-    margin-bottom: 1.5rem;
-}
-
-.form-group {
-    margin: 0;
-}
-
-.form-group label {
-    display: block;
-    margin-bottom: 0.5rem;
-    color: var(--stone-dark);
-    font-weight: 500;
-    font-size: 0.9rem;
-}
-
-.form-group input {
-    width: 100%;
-    padding: 0.75rem;
-    border: 1px solid #ddd;
-    border-radius: 8px;
-    font-size: 1rem;
-    box-sizing: border-box;
-    transition: border-color 0.3s ease;
-}
-
-.form-group input:focus {
-    outline: none;
-    border-color: var(--stone-green);
-}
-
-.btn {
-    background-color: var(--stone-green);
-    color: white;
-    border: none;
-    padding: 1rem 2rem;
-    border-radius: 8px;
-    cursor: pointer;
-    font-size: 1rem;
-    font-weight: 500;
-    transition: background-color 0.3s ease;
-    width: 100%;
-    margin-top: 1rem;
-}
-
-.btn:hover {
-    background-color: #009952;
-}
-
-.parcelas-grid {
-    display: none;
-    margin-top: 2rem;
-    padding-top: 1.5rem;
-    border-top: 1px solid #eee;
-}
-
-.parcelas-grid.visible {
-    display: grid;
-}
-
-.editable-label {
-    cursor: pointer;
-    user-select: none;
-}
-
-.label-input {
-    display: none;
-    width: 100%;
-    padding: 4px;
-    margin-bottom: 0.5rem;
-    border: 1px solid var(--stone-green);
-    border-radius: 4px;
-    font-size: 0.9rem;
-}
-
-.label-input.editing {
-    display: block;
-}
-
-.checkbox-group {
-    display: flex;
-    gap: 1rem;
-    margin-bottom: 1.5rem;
-}
-
-.checkbox-group label {
-    display: flex;
-    align-items: center;
-    gap: 0.5rem;
-    color: var(--stone-dark);
-    font-size: 0.9rem;
-    cursor: pointer;
-}
-
-.checkbox-group input[type="checkbox"] {
-    width: 18px;
-    height: 18px;
-    accent-color: var(--stone-green);
-}
-
-.floating-button {
-    position: fixed;
-    bottom: 3rem;
-    left: 50%;
-    transform: translateX(-50%);
-    background-color: var(--stone-green);
-    color: white;
-    padding: 1rem 2rem;
-    border-radius: 8px;
-    border: none;
-    cursor: pointer;
-    font-size: 1rem;
-    font-weight: 500;
-    box-shadow: 0 4px 12px rgba(0, 181, 99, 0.2);
-    transition: all 0.3s ease;
-    z-index: 1000;
-}
-
-.floating-button:hover {
-    background-color: #009952;
-    transform: translateX(-50%) translateY(-2px);
-    box-shadow: 0 6px 16px rgba(0, 181, 99, 0.3);
-}
-
-.reset-button {
-    position: fixed;
-    bottom: 3rem;
-    right: 2rem;
-    background-color: #ff4444;
-    color: white;
-    width: 48px;
-    height: 52px;
-    border-radius: 8px;
-    border: none;
-    cursor: pointer;
-    display: none;
-    justify-content: center;
-    align-items: center;
-    box-shadow: 0 4px 12px rgba(255, 68, 68, 0.2);
-    transition: all 0.3s ease;
-}
-
-.reset-button:hover {
-    background-color: #cc0000;
-    transform: translateY(-2px);
-    box-shadow: 0 6px 16px rgba(255, 68, 68, 0.3);
-}
-
-.reset-button.visible {
-    display: flex;
-}
-
-.card.results-card {
-    display: none;
-    position: relative;
-    transition: all 0.3s ease;
-    overflow: hidden;
-    padding-right: 40px;
-}
-
-.card.results-card.minimized {
-    max-height: 80px;
-    overflow: hidden;
-}
-
-.toggle-results-btn {
-    position: absolute;
-    top: 1.5rem;
-    right: 10px;
-    transform: none;
-    background-color: var(--stone-green);
-    color: white;
-    width: 40px;
-    height: 40px;
-    border: none;
-    border-radius: 8px; 
-    cursor: pointer;
-    display: flex;
-    justify-content: center;
-    align-items: center;
-    transition: all 0.3s ease;
-    z-index: 10;
-}
-
-.toggle-results-btn:hover {
-    background-color: #009952;
-}
-
-.toggle-results-btn .material-icons {
-    transition: transform 0.3s ease;
-}
-
-.card.results-card.minimized .toggle-results-btn .material-icons {
-    transform: rotate(180deg);
-}
-
-.card.results-card.visible {
-    display: block;
-    border: 2px solid var(--stone-green);
-    animation: highlight-results 0.5s ease;
-}
-
-@keyframes highlight-results {
-    0% {
-        border-color: transparent;
-        transform: scale(1);
-    }
-    50% {
-        border-color: var(--stone-green);
-        transform: scale(1.01);
-    }
-    100% {
-        border-color: var(--stone-green);
-        transform: scale(1);
-    }
-}
-
-.result-item {
-    margin-bottom: 1rem;
-    padding: 1rem;
-    border-radius: 8px;
-    background-color: #f8f9fa;
-}
-
-.result-title {
-    font-weight: 600;
-    margin-bottom: 0.5rem;
-}
-
-.result-detail {
-    margin: 0.25rem 0;
-}
-
-.economia {
-    color: var(--stone-green);
-}
-
-.investimento {
-    color: #ff6b35;
-}
-
-.result-message {
-    padding: 1rem;
-    background-color: #fff3cd;
-    border: 1px solid #ffeeba;
-    border-radius: 8px;
-    color: #856404;
-}
-
-.result-cards-container {
-    display: flex;
-    overflow-x: auto;
-    scroll-snap-type: x mandatory;
-    gap: 1rem;
-    padding: 0.5rem;
-    margin: -0.5rem;
-    -webkit-overflow-scrolling: touch;
-}
-
-.result-card {
-    flex: 0 0 calc(100% - 2rem); 
-    scroll-snap-align: start;
-    background-color: var(--stone-green);
-    color: white;
-    padding: 1rem;
-    border-radius: 8px;
-    min-width: 260px; 
-    box-sizing: border-box; 
-}
-
-.results-section {
-    border-top: 2px solid #eee;
-    margin-top: 2rem;
-    padding-top: 1rem;
-}
-
-.daily-comparison {
-    margin-top: 2rem;
-    padding: 1.5rem;
-    background-color: var(--stone-green);
-    border-radius: 8px;
-    color: white;
-    display: flex;
-    align-items: center;
-    gap: 1rem;
-    font-size: 1.1rem;
-    animation: pulse 2s infinite;
-}
-
-.daily-comparison .material-icons {
-    font-size: 2rem;
-}
-
-.tpv-comparison {
-    margin-top: 2rem;
-    padding: 1.5rem;
-    background-color: var(--stone-green);
-    border-radius: 8px;
-    color: white;
-    display: flex;
-    align-items: center;
-    gap: 1rem;
-    font-size: 1.1rem;
-    animation: pulse 2s infinite;
-}
-
-.tpv-comparison .material-icons {
-    font-size: 2rem;
-}
-
-.success-comparison {
-    margin-top: 2rem;
-    padding: 1.5rem;
-    background-color: var(--stone-green);
-    border-radius: 8px;
-    color: white;
-    display: flex;
-    align-items: center;
-    gap: 1rem;
-    font-size: 1.1rem;
-    animation: pulse 2s infinite;
-}
-
-.success-comparison .material-icons {
-    font-size: 2rem;
-}
-
-@keyframes pulse {
-    0% {
-        transform: scale(1);
-    }
-    50% {
-        transform: scale(1.02);
-    }
-    100% {
-        transform: scale(1);
-    }
-}
-
-.card.vantagens-card {
-    position: relative;
-    transition: all 0.3s ease;
-    overflow: hidden;
-    padding-right: 40px;
-    display: none;
-    border: 2px solid var(--stone-green);
-}
-
-.card.vantagens-card.visible {
-    display: block;
-}
-
-.card.vantagens-card.minimized {
-    max-height: 80px;
-    overflow: hidden;
-}
-
-.card.vantagens-card.minimized .toggle-results-btn .material-icons {
-    transform: rotate(180deg);
-}
-
-.vantagens-card .result-item {
-    border-left: 4px solid var(--stone-green);
-    padding-left: 1rem;
-    margin-bottom: 1.5rem;
-}
-
-.vantagens-card .result-title {
-    color: var(--stone-green);
-    font-weight: 600;
-}
-
-@media (max-width: 480px) {
-    .container {
-        padding: 0 0.5rem;
-    }
-
-    .card {
-        padding: 1rem;
-    }
-
-    .form-grid, .parcelas-grid {
-        grid-template-columns: repeat(2, 1fr);
-    }
-}
-</style>
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Encontre o Impostor</title>
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+    <style>
+        :root {
+            --primary: #6C63FF;
+            --secondary: #FF6584;
+            --accent: #42EADD;
+            --bg: #1a1a2e;
+            --glass: rgba(255, 255, 255, 0.1);
+            --glass-border: rgba(255, 255, 255, 0.2);
+            --text: #ffffff;
+        }
+
+        * {
+            box-sizing: border-box;
+            margin: 0;
+            padding: 0;
+            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+            user-select: none; /* Previne seleção de texto para não dar spoiler */
+        }
+
+        body {
+            background-color: var(--bg);
+            background-image: radial-gradient(circle at 10% 20%, rgba(108, 99, 255, 0.2) 0%, transparent 20%),
+                              radial-gradient(circle at 90% 80%, rgba(255, 101, 132, 0.2) 0%, transparent 20%);
+            color: var(--text);
+            min-height: 100vh;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            overflow-x: hidden;
+        }
+
+        .container {
+            width: 90%;
+            max-width: 500px;
+            background: var(--glass);
+            backdrop-filter: blur(16px);
+            -webkit-backdrop-filter: blur(16px);
+            border: 1px solid var(--glass-border);
+            border-radius: 20px;
+            padding: 2rem;
+            box-shadow: 0 8px 32px 0 rgba(0, 0, 0, 0.37);
+            position: relative;
+            transition: all 0.3s ease;
+        }
+
+        h1 {
+            text-align: center;
+            font-size: 2rem;
+            margin-bottom: 1.5rem;
+            background: linear-gradient(90deg, var(--primary), var(--secondary));
+            -webkit-background-clip: text;
+            -webkit-text-fill-color: transparent;
+            font-weight: 800;
+        }
+
+        /* --- Controles do Formulário --- */
+        .control-group {
+            margin-bottom: 1.5rem;
+        }
+
+        label {
+            display: block;
+            margin-bottom: 0.5rem;
+            font-weight: 600;
+            font-size: 0.9rem;
+            color: #ddd;
+        }
+
+        .slider-container {
+            display: flex;
+            align-items: center;
+            gap: 10px;
+        }
+
+        input[type="range"] {
+            flex-grow: 1;
+            accent-color: var(--primary);
+            cursor: pointer;
+        }
+
+        .number-display {
+            background: var(--primary);
+            padding: 2px 8px;
+            border-radius: 5px;
+            min-width: 30px;
+            text-align: center;
+        }
+
+        .switch-container {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            margin-bottom: 10px;
+            padding: 10px;
+            background: rgba(0,0,0,0.2);
+            border-radius: 10px;
+        }
+
+        /* Toggle Switch */
+        .switch {
+            position: relative;
+            display: inline-block;
+            width: 50px;
+            height: 24px;
+        }
+        .switch input { opacity: 0; width: 0; height: 0; }
+        .slider {
+            position: absolute;
+            cursor: pointer;
+            top: 0; left: 0; right: 0; bottom: 0;
+            background-color: #ccc;
+            transition: .4s;
+            border-radius: 34px;
+        }
+        .slider:before {
+            position: absolute;
+            content: "";
+            height: 16px;
+            width: 16px;
+            left: 4px;
+            bottom: 4px;
+            background-color: white;
+            transition: .4s;
+            border-radius: 50%;
+        }
+        input:checked + .slider { background-color: var(--primary); }
+        input:checked + .slider:before { transform: translateX(26px); }
+
+        .counter-input {
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+            background: rgba(0,0,0,0.2);
+            padding: 10px;
+            border-radius: 10px;
+            margin-bottom: 10px;
+        }
+
+        .btn-counter {
+            background: var(--secondary);
+            border: none;
+            color: white;
+            width: 30px;
+            height: 30px;
+            border-radius: 50%;
+            cursor: pointer;
+            font-weight: bold;
+            font-size: 1.2rem;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+        }
+        .btn-counter:disabled {
+            background: gray;
+            cursor: not-allowed;
+        }
+
+        /* --- Botões Principais --- */
+        .btn-main {
+            width: 100%;
+            padding: 15px;
+            border: none;
+            border-radius: 12px;
+            font-size: 1.1rem;
+            font-weight: bold;
+            cursor: pointer;
+            transition: transform 0.2s;
+            margin-top: 10px;
+        }
+
+        .btn-start {
+            background: linear-gradient(135deg, var(--primary), var(--secondary));
+            color: white;
+            box-shadow: 0 4px 15px rgba(108, 99, 255, 0.4);
+        }
+
+        .btn-reveal {
+            background: var(--accent);
+            color: #000;
+        }
+
+        .btn-hide {
+            background: #444;
+            color: #fff;
+        }
+
+        .btn-main:active {
+            transform: scale(0.98);
+        }
+
+        /* --- Telas do Jogo --- */
+        .screen {
+            display: none;
+            animation: fadeIn 0.5s ease;
+        }
+        .screen.active {
+            display: block;
+        }
+
+        @keyframes fadeIn {
+            from { opacity: 0; transform: translateY(10px); }
+            to { opacity: 1; transform: translateY(0); }
+        }
+        /* --- Cartão de Revelação --- */
+        .card-reveal-area {
+            text-align: center;
+            min-height: 300px;
+            display: flex;
+            flex-direction: column;
+            justify-content: center;
+            align-items: center;
+        }
+
+        .player-turn-text {
+            font-size: 1.5rem;
+            margin-bottom: 20px;
+            color: var(--accent);
+        }
+
+        .icon-display {
+            font-size: 6rem;
+            margin: 20px 0;
+            filter: drop-shadow(0 0 10px rgba(255,255,255,0.5));
+            transition: all 0.3s;
+        }
+
+        .role-text {
+            font-size: 1.8rem;
+            font-weight: bold;
+            margin-top: 10px;
+            text-transform: uppercase;
+            letter-spacing: 2px;
+        }
+
+        .secret-content {
+            display: none;
+            flex-direction: column;
+            align-items: center;
+            width: 100%;
+        }
+
+        .impostor-color { color: var(--secondary); }
+        .civilian-color { color: var(--accent); }
+        .detective-color { color: #FFA500; }
+
+        .hidden-info {
+            font-size: 0.9rem;
+            color: #aaa;
+            margin-top: 5px;
+        }
+
+        .validation-msg {
+            color: var(--secondary);
+            font-size: 0.8rem;
+            margin-top: 5px;
+            text-align: right;
+            min-height: 1.2em;
+        }
+
+    </style>
 </head>
 <body>
-<div class="header">
-    <div class="header-content">
-        <h1>Negociação Stone</h1>
-        <button class="menu-button">
-            <span class="material-icons">menu</span>
-        </button>
-    </div>
-</div>
 
-<div class="container">
-    <div class="card">
-        <h2 class="card-title">Máquina Atual</h2>
-        <div class="tab-header">
-            <div style="display: flex; align-items: center;">
-                <button class="tab active" data-tab="visa-master">Dados 1</button>
-                <button class="change-tab-btn">
-                    <span class="material-icons">sync_alt</span>
-                </button>
+    <div class="container">
+        
+        <div id="screen-setup" class="screen active">
+            <h1><i class="fa-solid fa-user-secret"></i> Configuração</h1>
+            
+            <div class="control-group">
+                <label>Total de Jogadores</label>
+                <div class="slider-container">
+                    <input type="range" id="totalPlayers" min="3" max="30" value="5">
+                    <span class="number-display" id="totalPlayersVal">5</span>
+                </div>
+                <div id="rule-msg" class="validation-msg">Máx. Especiais (Imp+Det): 1</div>
             </div>
-            <div class="tab-dropdown">
-                <button data-tab="visa-master">Dados 1</button>
-                <button data-tab="elo">Dados 2</button>
-                <button data-tab="hiper">Dados 3</button>
-                <button data-tab="amex">Dados 4</button>
+
+            <div class="switch-container">
+                <label>Modo Caos (Aleatório)</label>
+                <label class="switch">
+                    <input type="checkbox" id="chaosMode">
+                    <span class="slider"></span>
+                </label>
             </div>
-        </div>
 
-        <div class="tab-content active" id="visa-master">
-            <form>
-                <div class="form-grid">
-                    <div class="form-group">
-                        <label>Débito</label>
-                        <input type="number" step="0.01" name="debito" placeholder="%" inputmode="numeric">
-                    </div>
-                    <div class="form-group">
-                        <label>Crédito</label>
-                        <input type="number" step="0.01" name="credito" placeholder="%" inputmode="numeric">
-                    </div>
-                    <div class="form-group">
-                        <label>Antecipação</label>
-                        <input type="number" step="0.01" name="antecipacao" placeholder="%" inputmode="numeric">
-                    </div>
-                    <div class="form-group">
-                        <label>Pix</label>
-                        <input type="number" step="0.01" name="pix" placeholder="%" inputmode="numeric">
-                    </div>
-                    <div class="form-group">
-                        <label>Aluguel</label>
-                        <input type="number" step="0.01" name="aluguel" placeholder="R$" inputmode="numeric">
-                    </div>
-                    <div class="form-group">
-                        <label>Quant. Máquinas</label>
-                        <input type="number" name="quant_maquinas" placeholder="un" inputmode="numeric">
-                    </div>
-                    <div class="form-group">
-                        <label>Crédito 2x a 6x</label>
-                        <input type="number" step="0.01" name="credito_2x_6x" placeholder="%" inputmode="numeric">
-                    </div>
-                    <div class="form-group">
-                        <label>Crédito 7x a 12x</label>
-                        <input type="number" step="0.01" name="credito_7x_12x" placeholder="%" inputmode="numeric">
-                    </div>
-                    <div class="form-group">
-                        <label class="editable-label" data-default-name="Outros 1">Outros 1</label>
-                        <input type="text" class="label-input" value="Outros 1">
-                        <input type="number" name="outros_1" placeholder="R$" inputmode="numeric">
-                    </div>
-                    <div class="form-group">
-                        <label class="editable-label" data-default-name="Outros 2">Outros 2</label>
-                        <input type="text" class="label-input" value="Outros 2">
-                        <input type="number" name="outros_2" placeholder="R$" inputmode="numeric">
+            <div id="manual-controls">
+                <div class="control-group">
+                    <label>Impostores</label>
+                    <div class="counter-input">
+                        <button class="btn-counter" onclick="adjustCount('impostors', -1)">-</button>
+                        <span id="impostorsVal">1</span>
+                        <button class="btn-counter" onclick="adjustCount('impostors', 1)">+</button>
                     </div>
                 </div>
-                <button type="button" class="btn toggle-parcelas">Mostrar Taxas por Parcelas</button>
-                <div class="parcelas-grid"></div>
-            </form>
-        </div>
 
-        <div class="tab-content" id="elo">
-            <!-- Será clonado via JavaScript -->
-        </div>
-        <div class="tab-content" id="hiper">
-            <!-- Será clonado via JavaScript -->
-        </div>
-        <div class="tab-content" id="amex">
-            <!-- Será clonado via JavaScript -->
-        </div>
-    </div>
+                <div class="switch-container">
+                    <label>Habilitar Detetive</label>
+                    <label class="switch">
+                        <input type="checkbox" id="hasDetective" onchange="toggleDetectiveInput()">
+                        <span class="slider"></span>
+                    </label>
+                </div>
 
-    <div class="card">
-        <h2 class="card-title">TPV Mensal</h2>
-        <form>
-            <div class="form-grid">
-                <div class="form-group">
-                    <label>Débito</label>
-                    <input type="number" name="tpv_debito" placeholder="R$" inputmode="numeric">
-                </div>
-                <div class="form-group">
-                    <label>Crédito</label>
-                    <input type="number" name="tpv_credito" placeholder="R$" inputmode="numeric">
-                </div>
-                <div class="form-group">
-                    <label>Pix</label>
-                    <input type="number" name="tpv_pix" placeholder="R$" inputmode="numeric">
-                </div>
-                <div class="form-group">
-                    <label>Crédito 2x a 6x</label>
-                    <input type="number" name="tpv_credito_2x_6x" placeholder="R$" inputmode="numeric">
-                </div>
-                <div class="form-group">
-                    <label>Crédito 7x a 12x</label>
-                    <input type="number" name="tpv_credito_7x_12x" placeholder="R$" inputmode="numeric">
+                <div class="control-group" id="detective-control" style="opacity: 0.5; pointer-events: none;">
+                    <label>Detetives</label>
+                    <div class="counter-input">
+                        <button class="btn-counter" onclick="adjustCount('detectives', -1)">-</button>
+                        <span id="detectivesVal">0</span>
+                        <button class="btn-counter" onclick="adjustCount('detectives', 1)">+</button>
+                    </div>
                 </div>
             </div>
-            <div class="parcelas-grid"></div>
-        </form>
+
+            <div class="switch-container">
+                <label title="Se ativado, o impostor verá que é o Impostor. Se desativado, ele verá 'Civil' mas com o ícone errado.">Impostor sabe que é Impostor?</label>
+                <label class="switch">
+                    <input type="checkbox" id="impostorKnows" checked>
+                    <span class="slider"></span>
+                </label>
+            </div>
+
+            <button class="btn-main btn-start" onclick="startGame()">INICIAR JOGO</button>
+        </div>
+
+        <div id="screen-game" class="screen">
+            <h3 id="round-indicator" style="text-align: center; color: #888; margin-bottom: 20px;">Jogador 1 de 5</h3>
+            
+            <div class="card-reveal-area">
+                
+                <div id="view-hidden" style="display: flex; flex-direction: column; align-items: center; width: 100%;">
+                    <div class="player-turn-text">Passe para o <span id="current-player-name" style="font-weight:bold; color:#fff;">Jogador 1</span></div>
+                    <i class="fa-solid fa-fingerprint" style="font-size: 5rem; color: #555; margin: 30px 0;"></i>
+                    <button class="btn-main btn-reveal" onclick="revealCard()">MOSTRAR PAPEL</button>
+                </div>
+
+                <div id="view-revealed" class="secret-content">
+                    <div id="role-icon" class="icon-display"></div>
+                    <div id="role-name" class="role-text">CIVIL</div>
+                    <div id="item-name" class="hidden-info" style="margin-bottom: 20px;">Objeto</div>
+                    <p style="text-align: center; margin-bottom: 20px; font-size: 0.9rem; opacity: 0.8;">Memorize sua imagem e clique para esconder.</p>
+                    <button class="btn-main btn-hide" onclick="hideCard()">ESCONDER</button>
+                </div>
+
+            </div>
+        </div>
+<div id="screen-result" class="screen" style="text-align: center;">
+            <i class="fa-solid fa-comments" style="font-size: 4rem; color: var(--accent); margin-bottom: 20px;"></i>
+            <h1>Hora da Votação!</h1>
+            <p style="margin-bottom: 30px; line-height: 1.6;">Todos viram suas cartas.<br>Debatam e encontrem o impostor!</p>
+            
+            <button class="btn-main btn-start" onclick="returnToMenu()">NOVA RODADA</button>
+        </div>
+
     </div>
 
-    <div class="card">
-        <h2 class="card-title">Oferta Stone</h2>
-        <div class="tab-header">
-            <div style="display: flex; align-items: center;">
-                <button class="tab active" data-tab="oferta-1">Oferta Stone 1</button>
-                <button class="change-tab-btn">
-                    <span class="material-icons">sync_alt</span>
-                </button>
-            </div>
-            <div class="tab-dropdown">
-                <button data-tab="oferta-1">Oferta Stone 1</button>
-                <button data-tab="oferta-2">Oferta Stone 2</button>
-                <button data-tab="oferta-3">Oferta Stone 3</button>
-            </div>
-        </div>
+    <script>
+        // --- BANCO DE DADOS DE ÍCONES (PARES: CIVIL, IMPOSTOR) ---
+        // Mais de 100 opções conceituais (50 pares = 100 icones, expansível)
+        const iconPairs = [
+            // Natureza
+            { c: {i: 'fa-sun', n: 'Sol'}, i: {i: 'fa-star', n: 'Estrela'} },
+            { c: {i: 'fa-cloud-rain', n: 'Chuva'}, i: {i: 'fa-snowflake', n: 'Neve'} },
+            { c: {i: 'fa-fire', n: 'Fogo'}, i: {i: 'fa-volcano', n: 'Vulcão'} },
+            { c: {i: 'fa-tree', n: 'Árvore'}, i: {i: 'fa-leaf', n: 'Folha'} },
+            { c: {i: 'fa-mountain', n: 'Montanha'}, i: {i: 'fa-tents', n: 'Acampamento'} },
+            { c: {i: 'fa-water', n: 'Água'}, i: {i: 'fa-droplet', n: 'Gota'} },
+            
+            // Animais
+            { c: {i: 'fa-cat', n: 'Gato'}, i: {i: 'fa-dog', n: 'Cachorro'} },
+            { c: {i: 'fa-fish', n: 'Peixe'}, i: {i: 'fa-shrimp', n: 'Camarão'} },
+            { c: {i: 'fa-spider', n: 'Aranha'}, i: {i: 'fa-bug', n: 'Besouro'} },
+            { c: {i: 'fa-horse', n: 'Cavalo'}, i: {i: 'fa-cow', n: 'Vaca'} },
+            { c: {i: 'fa-crow', n: 'Corvo'}, i: {i: 'fa-dove', n: 'Pomba'} },
+            { c: {i: 'fa-frog', n: 'Sapo'}, i: {i: 'fa-otter', n: 'Lontra'} },
+            
+            // Comida
+            { c: {i: 'fa-apple-whole', n: 'Maçã'}, i: {i: 'fa-lemon', n: 'Limão'} },
+            { c: {i: 'fa-burger', n: 'Hambúrguer'}, i: {i: 'fa-hotdog', n: 'Cachorro-quente'} },
+            { c: {i: 'fa-pizza-slice', n: 'Pizza'}, i: {i: 'fa-cheese', n: 'Queijo'} },
+            { c: {i: 'fa-ice-cream', n: 'Sorvete'}, i: {i: 'fa-cookie', n: 'Cookie'} },
+            { c: {i: 'fa-carrot', n: 'Cenoura'}, i: {i: 'fa-pepper-hot', n: 'Pimenta'} },
+            { c: {i: 'fa-mug-hot', n: 'Café'}, i: {i: 'fa-wine-glass', n: 'Vinho'} },
+            { c: {i: 'fa-bread-slice', n: 'Pão'}, i: {i: 'fa-cake-candles', n: 'Bolo'} },
 
-        <div class="checkbox-group">
-            <label>
-                <input type="checkbox" name="adesao"> Adesão
-            </label>
-            <label>
-                <input type="checkbox" name="ipv"> IPV
-            </label>
-            <label>
-                <input type="checkbox" name="raio_x"> Raio-X
-            </label>
-        </div>
+            // Transporte
+            { c: {i: 'fa-car', n: 'Carro'}, i: {i: 'fa-bus', n: 'Ônibus'} },
+            { c: {i: 'fa-plane', n: 'Avião'}, i: {i: 'fa-helicopter', n: 'Helicóptero'} },
+            { c: {i: 'fa-bicycle', n: 'Bicicleta'}, i: {i: 'fa-motorcycle', n: 'Moto'} },
+            { c: {i: 'fa-train', n: 'Trem'}, i: {i: 'fa-train-subway', n: 'Metrô'} },
+            { c: {i: 'fa-ship', n: 'Navio'}, i: {i: 'fa-sailboat', n: 'Barco a Vela'} },
+            
+            // Objetos / Casa
+            { c: {i: 'fa-key', n: 'Chave'}, i: {i: 'fa-lock', n: 'Cadeado'} },
+            { c: {i: 'fa-mobile', n: 'Celular'}, i: {i: 'fa-tablet', n: 'Tablet'} },
+            { c: {i: 'fa-pen', n: 'Caneta'}, i: {i: 'fa-pencil', n: 'Lápis'} },
+            { c: {i: 'fa-book', n: 'Livro'}, i: {i: 'fa-newspaper', n: 'Jornal'} },
+            { c: {i: 'fa-shirt', n: 'Camisa'}, i: {i: 'fa-socks', n: 'Meia'} },
+            { c: {i: 'fa-couch', n: 'Sofá'}, i: {i: 'fa-chair', n: 'Cadeira'} },
+            { c: {i: 'fa-bed', n: 'Cama'}, i: {i: 'fa-mattress-pillow', n: 'Travesseiro'} },
+            { c: {i: 'fa-lightbulb', n: 'Lâmpada'}, i: {i: 'fa-plug', n: 'Tomada'} },
+            
+            // Esportes / Lazer
+            { c: {i: 'fa-futbol', n: 'Futebol'}, i: {i: 'fa-basketball', n: 'Basquete'} },
+            { c: {i: 'fa-gamepad', n: 'Videogame'}, i: {i: 'fa-dice', n: 'Dados'} },
+            { c: {i: 'fa-guitar', n: 'Violão'}, i: {i: 'fa-drum', n: 'Tambor'} },
+            { c: {i: 'fa-camera', n: 'Câmera'}, i: {i: 'fa-video', n: 'Filmadora'} },
+            
+            // Profissões / Pessoas
+            { c: {i: 'fa-user-doctor', n: 'Médico'}, i: {i: 'fa-user-nurse', n: 'Enfermeiro'} },
+            { c: {i: 'fa-user-graduate', n: 'Estudante'}, i: {i: 'fa-school', n: 'Escola'} },
+            { c: {i: 'fa-user-astronaut', n: 'Astronauta'}, i: {i: 'fa-rocket', n: 'Foguete'} },
+            { c: {i: 'fa-crown', n: 'Rei'}, i: {i: 'fa-chess-king', n: 'Rei (Xadrez)'} },
+            
+            // Aleatórios
+            { c: {i: 'fa-ghost', n: 'Fantasma'}, i: {i: 'fa-skull', n: 'Caveira'} },
+            { c: {i: 'fa-gift', n: 'Presente'}, i: {i: 'fa-box', n: 'Caixa'} },
+            { c: {i: 'fa-heart', n: 'Coração'}, i: {i: 'fa-heart-crack', n: 'Coração Partido'} },
+            { c: {i: 'fa-money-bill', n: 'Dinheiro'}, i: {i: 'fa-credit-card', n: 'Cartão'} },
+        ];
 
-        <div class="tab-content active" id="oferta-1">
-            <form>
-                <div class="form-grid">
-                    <div class="form-group">
-                        <label>Débito</label>
-                        <input type="number" step="0.01" name="debito" placeholder="%" inputmode="numeric">
-                    </div>
-                    <div class="form-group">
-                        <label>Crédito</label>
-                        <input type="number" step="0.01" name="credito" placeholder="%" inputmode="numeric">
-                    </div>
-                    <div class="form-group">
-                        <label>Antecipação</label>
-                        <input type="number" step="0.01" name="antecipacao" placeholder="%" inputmode="numeric">
-                    </div>
-                    <div class="form-group">
-                        <label>Pix</label>
-                        <input type="number" step="0.01" name="pix" placeholder="%" inputmode="numeric">
-                    </div>
-                    <div class="form-group">
-                        <label>Aluguel</label>
-                        <input type="number" step="0.01" name="aluguel" placeholder="R$" inputmode="numeric">
-                    </div>
-                    <div class="form-group">
-                        <label>Quant. Máquinas</label>
-                        <input type="number" name="quant_maquinas" placeholder="un" inputmode="numeric">
-                    </div>
-                    <div class="form-group">
-                        <label>Crédito 2x a 6x</label>
-                        <input type="number" step="0.01" name="credito_2x_6x" placeholder="%" inputmode="numeric">
-                    </div>
-                    <div class="form-group">
-                        <label>Crédito 7x a 12x</label>
-                        <input type="number" step="0.01" name="credito_7x_12x" placeholder="%" inputmode="numeric">
-                    </div>
-                    <div class="form-group">
-                        <label class="editable-label" data-default-name="Outros 1">Outros 1</label>
-                        <input type="text" class="label-input" value="Outros 1">
-                        <input type="number" name="outros_1" placeholder="R$" inputmode="numeric">
-                    </div>
-                    <div class="form-group">
-                        <label class="editable-label" data-default-name="Outros 2">Outros 2</label>
-                        <input type="text" class="label-input" value="Outros 2">
-                        <input type="number" name="outros_2" placeholder="R$" inputmode="numeric">
-                    </div>
-                </div>
-                <div class="parcelas-grid"></div>
-            </form>
-        </div>
+        // --- ESTADO DO JOGO ---
+        let state = {
+            totalPlayers: 5,
+            impostors: 1,
+            detectives: 0,
+            players: [], // Array de objetos {role, icon, name}
+            currentPlayerIndex: 0,
+            usedPairs: [] // Para evitar repetição na sessão
+        };
 
-        <div class="tab-content" id="oferta-2">
-          
+        // --- MANIPULAÇÃO DO DOM (CONFIGURAÇÃO) ---
+        const totalPlayersInput = document.getElementById('totalPlayers');
+        const chaosModeInput = document.getElementById('chaosMode');
+        const hasDetectiveInput = document.getElementById('hasDetective');
+        const manualControls = document.getElementById('manual-controls');
+
+        totalPlayersInput.addEventListener('input', (e) => {
+            state.totalPlayers = parseInt(e.target.value);
+            document.getElementById('totalPlayersVal').innerText = state.totalPlayers;
+            validateCounts();
+        });
+
+        chaosModeInput.addEventListener('change', (e) => {
+            if(e.target.checked) {
+                manualControls.style.opacity = '0.3';
+                manualControls.style.pointerEvents = 'none';
+            } else {
+                manualControls.style.opacity = '1';
+                manualControls.style.pointerEvents = 'all';
+            }
+        });
+
+        function toggleDetectiveInput() {
+            const controls = document.getElementById('detective-control');
+            if(hasDetectiveInput.checked) {
+                controls.style.opacity = '1';
+                controls.style.pointerEvents = 'all';
+                state.detectives = 1;
+            } else {
+                controls.style.opacity = '0.5';
+                controls.style.pointerEvents = 'none';
+                state.detectives = 0;
+            }
+            document.getElementById('detectivesVal').innerText = state.detectives;
+            validateCounts();
+        }
+
+        function adjustCount(type, delta) {
+            const maxSpecials = Math.floor(state.totalPlayers / 3);
+            
+            if (type === 'impostors') {
+                let newVal = state.impostors + delta;
+                if (newVal < 1) newVal = 1; // Mínimo 1 impostor
+                // Validação Regra 3/1
+                if (newVal + state.detectives <= maxSpecials) {
+                    state.impostors = newVal;
+                }
+            } else if (type === 'detectives') {
+                let newVal = state.detectives + delta;
+                if (newVal < 0) newVal = 0;
+                if (newVal + state.impostors <= maxSpecials) {
+                    state.detectives = newVal;
+                }
+            }
+            
+            document.getElementById('impostorsVal').innerText = state.impostors;
+            document.getElementById('detectivesVal').innerText = state.detectives;
+            validateCounts();
+        }
+
+        function validateCounts() {
+            const maxSpecials = Math.floor(state.totalPlayers / 3);
+            document.getElementById('rule-msg').innerText = `Máx. Especiais (Imp+Det): ${maxSpecials}`;
+            
+            // Correção automática se o número de jogadores diminuir
+            if (!chaosModeInput.checked) {
+                if (state.impostors + state.detectives > maxSpecials) {
+                    // Reseta para padrão seguro
+                    state.detectives = 0;
+                    state.impostors = Math.max(1, maxSpecials); 
+                    if(state.impostors > maxSpecials) state.impostors = 1; // Caso jogadores < 3 (embora min seja 3)
+                    
+                    document.getElementById('impostorsVal').innerText = state.impostors;
+                    document.getElementById('detectivesVal').innerText = state.detectives;
+                    if(hasDetectiveInput.checked) {
+                        // Se tinha detetive mas não cabe mais, mantém marcado mas zero, ou ajusta impostor
+                        // Simplesmente ajustamos os valores visuais
+                    }
+                }
+            }
+        }
+        // --- LÓGICA DO JOGO ---
+
+        function getUniqueIconPair() {
+            // Se já usamos todos, reseta
+            if (state.usedPairs.length >= iconPairs.length) {
+                state.usedPairs = [];
+            }
+            
+            let pair;
+            let index;
+            do {
+                index = Math.floor(Math.random() * iconPairs.length);
+            } while (state.usedPairs.includes(index));
+
+            state.usedPairs.push(index);
+            return iconPairs[index];
+        }
+
+        function startGame() {
+            const maxSpecials = Math.floor(state.totalPlayers / 3);
+            
+            let numImpostors = state.impostors;
+            let numDetectives = state.detectives;
+
+            // Modo Caos
+            if (chaosModeInput.checked) {
+                // Aleatório respeitando o limite
+                // Mínimo 1 impostor
+                // Resto pode ser detetive ou nada
+                
+                // Ex: 9 jogadores -> max 3 especiais.
+                // Impostor: rand(1, 3). Digamos 2.
+                // Detetive: rand(0, 3-2). Digamos 1.
+                
+                // Se maxSpecials for 0 (menos de 3 players - não deve ocorrer pelo input), força 1 imp
+                const limit = Math.max(1, maxSpecials);
+                
+                numImpostors = Math.floor(Math.random() * limit) + 1; // 1 a limit
+                
+                // Se o usuário permitiu detetives no caos (vamos assumir que a checkbox detetive conta)
+                // Ou vamos sempre permitir no caos? O prompt diz "quantidade de impostores e detetives aleatórios".
+                // Vamos assumir que pode ter detetive no caos sempre.
+                const remaining = limit - numImpostors;
+                numDetectives = remaining > 0 ? Math.floor(Math.random() * (remaining + 1)) : 0;
+            }
+
+            // Gera Array de Roles
+            let roles = [];
+            for(let i=0; i<numImpostors; i++) roles.push('impostor');
+            for(let i=0; i<numDetectives; i++) roles.push('detective');
+            while(roles.length < state.totalPlayers) roles.push('civilian');
+
+            // Embaralha (Fisher-Yates)
+            for (let i = roles.length - 1; i > 0; i--) {
+                const j = Math.floor(Math.random() * (i + 1));
+                [roles[i], roles[j]] = [roles[j], roles[i]];
+            }
+
+            // Seleciona Ícones
+            const currentPair = getUniqueIconPair();
+            const impostorKnows = document.getElementById('impostorKnows').checked;
+
+            // Monta dados dos jogadores
+            state.players = roles.map(role => {
+                let iconClass = '';
+                let iconName = '';
+                let displayName = '';
+                let colorClass = '';
+
+                if (role === 'civilian') {
+                    iconClass = currentPair.c.i;
+                    iconName = currentPair.c.n;
+                    displayName = 'CIVIL';
+                    colorClass = 'civilian-color';
+                } else if (role === 'detective') {
+                    iconClass = 'fa-user-secret'; // Ícone genérico ou nenhum
+                    iconName = '???';
+                    displayName = 'DETETIVE';
+                    colorClass = 'detective-color';
+                } else if (role === 'impostor') {
+                    // Se sabe: vê ícone impostor e nome Impostor.
+                    // Se não sabe: vê ícone impostor mas nome Civil.
+                    iconClass = currentPair.i.i;
+                    iconName = currentPair.i.n; // Nome do objeto real dele
+                    
+                    if (impostorKnows) {
+                        displayName = 'IMPOSTOR';
+                        colorClass = 'impostor-color';
+                    } else {
+                        // O "Truque": Ele acha que é civil
+                        displayName = 'CIVIL'; 
+                        colorClass = 'civilian-color'; 
+                        // Nota: Ele recebe a imagem da estrela, mas dizemos "Civil". 
+                        // Se ele descrever "Tenho uma estrela" e os civis "Tenho um sol", ele é pego.
+                    }
+                }
+
+                return {
+                    role: role, // role real
+                    icon: iconClass,
+                    itemName: iconName,
+                    displayRole: displayName,
+                    color: colorClass
+                };
+            });
+
+            state.currentPlayerIndex = 0;
+            
+            // Troca Tela
+            document.getElementById('screen-setup').classList.remove('active');
+            document.getElementById('screen-game').classList.add('active');
+            updateGameScreen();
+        }
+
+        function updateGameScreen() {
+            const pIndex = state.currentPlayerIndex + 1;
+            document.getElementById('round-indicator').innerText = `Jogador ${pIndex} de ${state.totalPlayers}`;
+            document.getElementById('current-player-name').innerText = `Jogador ${pIndex}`;
+            
+            // Reseta visualização
+            document.getElementById('view-hidden').style.display = 'flex';
+            document.getElementById('view-revealed').style.display = 'none';
+        }
+
+        function revealCard() {
+            const player = state.players[state.currentPlayerIndex];
+            
+            const iconContainer = document.getElementById('role-icon');
+            const roleName = document.getElementById('role-name');
+            const itemName = document.getElementById('item-name');
+
+            // Limpa classes anteriores
+            iconContainer.className = 'icon-display fa-solid';
+            roleName.className = 'role-text';
+
+            if (player.role === 'detective') {
+                // Detetive não recebe imagem nem dica
+                iconContainer.classList.add('fa-magnifying-glass');
+                iconContainer.style.color = '#FFA500';
+                roleName.innerText = "VOCÊ É O DETETIVE";
+                roleName.classList.add(player.color);
+                itemName.innerText = "Descubra a palavra secreta ouvindo os outros.";
+            } else {
+                // Civil ou Impostor
+                iconContainer.classList.add(player.icon);
+                // Cor baseada no que ele DEVE ver
+                if (player.displayRole === 'IMPOSTOR') {
+                    iconContainer.style.color = 'var(--secondary)';
+                } else {
+                    iconContainer.style.color = 'var(--accent)';
+                }
+                
+                roleName.innerText = player.displayRole;
+                roleName.classList.add(player.color);
+                itemName.innerText = player.itemName;
+            }
+
+            document.getElementById('view-hidden').style.display = 'none';
+            document.getElementById('view-revealed').style.display = 'flex';
+        }
+
+        function hideCard() {
+            state.currentPlayerIndex++;
+            if (state.currentPlayerIndex >= state.totalPlayers) {
+                // Fim da rodada de revelação
+                document.getElementById('screen-game').classList.remove('active');
+                document.getElementById('screen-result').classList.add('active');
+            } else {
+                updateGameScreen();
+            }
+        }
+
+        function returnToMenu() {
+            document.getElementById('screen-result').classList.remove('active');
+            document.getElementById('screen-setup').classList.add('active');
+        }
+
+        // Inicialização
+        validateCounts();
+
+    </script>
+</body>
+</html>
